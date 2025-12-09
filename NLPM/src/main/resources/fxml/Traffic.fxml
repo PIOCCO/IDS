@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.TrafficController"
+      styleClass="content-view"
+      spacing="20">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+        <Label text="Network Traffic Monitor" styleClass="page-title"/>
+        <Label text="Real-time packet analysis" styleClass="page-subtitle"/>
+    </HBox>
+
+    <!-- Control Panel -->
+    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="control-panel">
+        <Label text="Protocol:" styleClass="filter-label"/>
+        <ComboBox fx:id="protocolFilter" prefWidth="120" styleClass="filter-combo"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="statusLabel" text="Status: Stopped" styleClass="status-label"/>
+
+        <Button fx:id="startMonitorBtn" text="▶️ Start Monitoring" styleClass="action-button success-button"/>
+        <Button fx:id="stopMonitorBtn" text="⏸️ Stop Monitoring" styleClass="action-button danger-button"/>
+    </HBox>
+
+    <!-- Traffic Statistics -->
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="33.33"/>
+            <ColumnConstraints percentWidth="33.33"/>
+            <ColumnConstraints percentWidth="33.33"/>
+        </columnConstraints>
+
+        <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="0">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Total Packets" styleClass="stat-label-small"/>
+            <Label text="45,892" styleClass="stat-value-small"/>
+        </VBox>
+
+        <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="1">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Bandwidth (MB/s)" styleClass="stat-label-small"/>
+            <Label text="12.4" styleClass="stat-value-small"/>
+        </VBox>
+
+        <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="2">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Active Connections" styleClass="stat-label-small"/>
+            <Label text="127" styleClass="stat-value-small"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Traffic Table -->
+    <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
+        <HBox styleClass="table-header" alignment="CENTER_LEFT">
+            <Label text="Live Traffic Data" styleClass="table-title"/>
+        </HBox>
+
+        <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="protocolColumn" text="Protocol" prefWidth="90"/>
+                <TableColumn fx:id="sourceIPColumn" text="Source IP" prefWidth="130"/>
+                <TableColumn fx:id="sourcePortColumn" text="Port" prefWidth="70"/>
+                <TableColumn fx:id="destIPColumn" text="Destination IP" prefWidth="130"/>
+                <TableColumn fx:id="destPortColumn" text="Port" prefWidth="70"/>
+                <TableColumn fx:id="packetSizeColumn" text="Size (bytes)" prefWidth="100"/>
+                <TableColumn fx:id="timestampColumn" text="Time" prefWidth="100"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

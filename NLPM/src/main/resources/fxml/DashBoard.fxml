@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.DashboardController"
+      styleClass="content-view"
+      spacing="20">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+        <Label text="Dashboard" styleClass="page-title"/>
+        <Label text="Real-time system overview" styleClass="page-subtitle"/>
+    </HBox>
+
+    <!-- Stats Cards -->
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+        </columnConstraints>
+
+        <!-- Total Alerts Card -->
+        <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="0">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Total Alerts" styleClass="stat-label"/>
+            <Label fx:id="totalAlertsLabel" text="247" styleClass="stat-value"/>
+            <Label text="↑ 12% from yesterday" styleClass="stat-change positive"/>
+        </VBox>
+
+        <!-- Critical Alerts Card -->
+        <VBox styleClass="stat-card stat-card-critical" spacing="10" GridPane.columnIndex="1">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Critical Alerts" styleClass="stat-label"/>
+            <Label fx:id="criticalAlertsLabel" text="18" styleClass="stat-value"/>
+            <Label text="Requires attention" styleClass="stat-change critical"/>
+        </VBox>
+
+        <!-- Warnings Card -->
+        <VBox styleClass="stat-card stat-card-warning" spacing="10" GridPane.columnIndex="2">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Warnings" styleClass="stat-label"/>
+            <Label fx:id="warningAlertsLabel" text="52" styleClass="stat-value"/>
+            <Label text="Monitor closely" styleClass="stat-change warning"/>
+        </VBox>
+
+        <!-- Packets Analyzed Card -->
+        <VBox styleClass="stat-card stat-card-info" spacing="10" GridPane.columnIndex="3">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Packets Analyzed" styleClass="stat-label"/>
+            <Label fx:id="packetsAnalyzedLabel" text="1,245,678" styleClass="stat-value"/>
+            <Label text="Last 24 hours" styleClass="stat-change info"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Recent Alerts Table -->
+    <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
+        <HBox styleClass="table-header" alignment="CENTER_LEFT">
+            <Label text="Recent Alerts" styleClass="table-title"/>
+        </HBox>
+
+        <TableView fx:id="recentAlertsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="100"/>
+                <TableColumn fx:id="typeColumn" text="Type" prefWidth="150"/>
+                <TableColumn fx:id="sourceColumn" text="Source IP" prefWidth="150"/>
+                <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="200"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>
+

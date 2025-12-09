@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.SettingsController"
+      styleClass="content-view"
+      spacing="20">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+        <Label text="Settings" styleClass="page-title"/>
+        <Label text="Configure system parameters" styleClass="page-subtitle"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" styleClass="settings-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="30">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- Network Settings -->
+            <VBox styleClass="settings-section" spacing="15">
+                <Label text="Network Configuration" styleClass="section-title"/>
+
+                <VBox spacing="8">
+                    <Label text="Network Interface" styleClass="field-label"/>
+                    <TextField fx:id="interfaceField" promptText="e.g., eth0" styleClass="settings-field"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="Alert Threshold (packets/sec)" styleClass="field-label"/>
+                    <TextField fx:id="alertThresholdField" promptText="100" styleClass="settings-field"/>
+                </VBox>
+            </VBox>
+
+            <!-- Alert Settings -->
+            <VBox styleClass="settings-section" spacing="15">
+                <Label text="Alert Configuration" styleClass="section-title"/>
+
+                <CheckBox fx:id="enableEmailAlertsCheck" text="Enable Email Alerts" styleClass="settings-checkbox"/>
+
+                <VBox spacing="8">
+                    <Label text="Email Address" styleClass="field-label"/>
+                    <TextField fx:id="emailField" promptText="admin@company.com" styleClass="settings-field"/>
+                </VBox>
+            </VBox>
+
+            <!-- Logging Settings -->
+            <VBox styleClass="settings-section" spacing="15">
+                <Label text="Logging Configuration" styleClass="section-title"/>
+
+                <CheckBox fx:id="enableLoggingCheck" text="Enable System Logging" styleClass="settings-checkbox"/>
+
+                <VBox spacing="8">
+                    <Label text="Log Level" styleClass="field-label"/>
+                    <ComboBox fx:id="logLevelCombo" prefWidth="200" styleClass="settings-combo"/>
+                </VBox>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button fx:id="saveBtn" text="💾 Save Settings" styleClass="action-button primary-button"/>
+                <Button fx:id="resetBtn" text="↺ Reset to Defaults" styleClass="action-button"/>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+
+</VBox>
