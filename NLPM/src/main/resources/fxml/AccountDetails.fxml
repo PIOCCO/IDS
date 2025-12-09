@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.AccountDetailsController"
+      spacing="20"
+      style="-fx-background-color: #1e1e1e;"
+      prefWidth="350.0">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header with Avatar and Name -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Circle fx:id="avatarCircle" radius="30" fill="#0078d4"/>
+        <Label fx:id="accountNameLabel"
+               text="Apple"
+               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- Email Field -->
+    <VBox spacing="5">
+        <Label text="Email"
+               style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+        <TextField fx:id="emailField"
+                   text="me@icloud.com"
+                   style="-fx-background-color: #2d2d2d; -fx-text-fill: white;
+                          -fx-border-color: #3d3d3d; -fx-border-width: 1;
+                          -fx-background-radius: 4; -fx-border-radius: 4;
+                          -fx-padding: 8;"/>
+    </VBox>
+
+    <!-- Password Field -->
+    <VBox spacing="5">
+        <Label text="Password"
+               style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+        <TextField fx:id="passwordField"
+                   text="••••••••"
+                   style="-fx-background-color: #2d2d2d; -fx-text-fill: white;
+                          -fx-border-color: #3d3d3d; -fx-border-width: 1;
+                          -fx-background-radius: 4; -fx-border-radius: 4;
+                          -fx-padding: 8;"/>
+    </VBox>
+
+    <!-- Username Field -->
+    <VBox spacing="5">
+        <Label text="Username"
+               style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+        <TextField fx:id="usernameField"
+                   style="-fx-background-color: #2d2d2d; -fx-text-fill: white;
+                          -fx-border-color: #3d3d3d; -fx-border-width: 1;
+                          -fx-background-radius: 4; -fx-border-radius: 4;
+                          -fx-padding: 8;"/>
+    </VBox>
+
+    <!-- Display Name Field -->
+    <VBox spacing="5">
+        <Label text="Display name"
+               style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+        <TextField fx:id="displayNameField"
+                   style="-fx-background-color: #2d2d2d; -fx-text-fill: white;
+                          -fx-border-color: #3d3d3d; -fx-border-width: 1;
+                          -fx-background-radius: 4; -fx-border-radius: 4;
+                          -fx-padding: 8;"/>
+    </VBox>
+
+</VBox>

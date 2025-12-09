@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.SidebarController"
+      fx:id="sidebarRoot"
+      spacing="5"
+      style="-fx-background-color: #2d2d2d;"
+      prefWidth="200.0">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="⚙ Settings"
+           style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;">
+        <VBox.margin>
+            <Insets top="10" bottom="20"/>
+        </VBox.margin>
+    </Label>
+
+    <VBox fx:id="menuContainer" spacing="5"/>
+
+</VBox>

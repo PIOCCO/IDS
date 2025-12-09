@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="accountItemRoot"
+      spacing="15"
+      alignment="CENTER_LEFT"
+      style="-fx-background-color: transparent; -fx-cursor: hand;">
+
+    <padding>
+        <Insets top="12" right="15" bottom="12" left="15"/>
+    </padding>
+
+    <Circle fx:id="accountAvatar" radius="20" fill="#0078d4"/>
+
+    <VBox spacing="2">
+        <Label fx:id="accountName"
+               text="Account Name"
+               style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        <Label fx:id="accountEmail"
+               text="email@example.com"
+               style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+    </VBox>
+
+</HBox>
