@@ -2,27 +2,61 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.controllers.SidebarController"
       fx:id="sidebarRoot"
+      styleClass="sidebar"
       spacing="5"
-      style="-fx-background-color: #2d2d2d;"
-      prefWidth="200.0">
+      prefWidth="220.0">
 
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="20" right="15" bottom="20" left="15"/>
     </padding>
 
-    <Label text="⚙ Settings"
-           style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;">
+    <!-- Logo/Title -->
+    <VBox styleClass="sidebar-header" spacing="5">
+        <Label text="🛡️ IDS Monitor" styleClass="sidebar-title"/>
+        <Label text="Intrusion Detection System" styleClass="sidebar-subtitle"/>
         <VBox.margin>
-            <Insets top="10" bottom="20"/>
+            <Insets bottom="30"/>
+        </VBox.margin>
+    </VBox>
+
+    <!-- Navigation Buttons -->
+    <Label text="NAVIGATION" styleClass="sidebar-section-title">
+        <VBox.margin>
+            <Insets top="10" bottom="10"/>
         </VBox.margin>
     </Label>
 
-    <VBox fx:id="menuContainer" spacing="5"/>
+    <Button fx:id="dashboardBtn" text="📊 Dashboard" styleClass="sidebar-button"/>
+    <Button fx:id="alertsBtn" text="🚨 Alerts" styleClass="sidebar-button"/>
+    <Button fx:id="trafficBtn" text="🌐 Traffic Monitor" styleClass="sidebar-button"/>
+    <Button fx:id="reportsBtn" text="📄 Reports" styleClass="sidebar-button"/>
+
+    <Label text="CONFIGURATION" styleClass="sidebar-section-title">
+        <VBox.margin>
+            <Insets top="30" bottom="10"/>
+        </VBox.margin>
+    </Label>
+
+    <Button fx:id="rulesBtn" text="⚙️ Rules" styleClass="sidebar-button"/>
+    <Button fx:id="settingsBtn" text="🔧 Settings" styleClass="sidebar-button"/>
+
+    <!-- System Status at Bottom -->
+    <VBox styleClass="system-status" spacing="8" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets top="50"/>
+        </VBox.margin>
+        <Label text="System Status" styleClass="status-title"/>
+        <Label text="● Active" styleClass="status-active"/>
+        <Label text="CPU: 23%" styleClass="status-info"/>
+        <Label text="Memory: 45%" styleClass="status-info"/>
+    </VBox>
 
 </VBox>
+
