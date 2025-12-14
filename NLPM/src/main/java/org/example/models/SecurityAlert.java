@@ -2,7 +2,7 @@ package org.example.models;
 
 import java.time.LocalDateTime;
 
-public class Alert {
+public class SecurityAlert {
     private String id;
     private String severity;
     private String type;
@@ -12,8 +12,8 @@ public class Alert {
     private LocalDateTime timestamp;
     private String status;
 
-    public Alert(String id, String severity, String type, String sourceIP,
-                 String destinationIP, String description, LocalDateTime timestamp) {
+    public SecurityAlert(String id, String severity, String type, String sourceIP,
+                         String destinationIP, String description, LocalDateTime timestamp) {
         this.id = id;
         this.severity = severity;
         this.type = type;

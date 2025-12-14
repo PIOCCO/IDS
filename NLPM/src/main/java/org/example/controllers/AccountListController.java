@@ -2,38 +2,38 @@ package org.example.controllers;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import org.example.database.dao.AccountDAO;
 import org.example.models.Account;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class AccountListController {
     private List<Account> accounts;
     private Account selectedAccount;
+    private AccountDAO accountDAO;
 
     public AccountListController() {
+        accountDAO = new AccountDAO();
         initializeAccounts();
     }
 
     private void initializeAccounts() {
-        accounts = new ArrayList<>();
-        accounts.add(new Account("Apple", "me@icloud.com", "#0078d4"));
-        accounts.add(new Account("Dropbox", "dropbox@mail.com", "#4a90e2"));
-        accounts.add(new Account("Facebook", "fb@company.com", "#3b5998"));
-        accounts.add(new Account("Adobe", "adobe@mail.com", "#ff0000"));
-        accounts.add(new Account("Amazon", "amazon@mail.com", "#ff9900"));
-        accounts.add(new Account("Google", "google@mail.com", "#4285f4"));
-        accounts.add(new Account("Ebay", "ebay@mail.com", "#e53238"));
-        accounts.add(new Account("Yahoo", "yahoo@mail.com", "#6001d2"));
+        // Initialize default accounts if database is empty
+        accountDAO.initializeDefaultAccounts();
+
+        // Load accounts from database
+        accounts = accountDAO.getAllAccounts();
 
         if (!accounts.isEmpty()) {
             selectedAccount = accounts.get(0);
             selectedAccount.setSelected(true);
         }
+
+        System.out.println("Loaded " + accounts.size() + " accounts from database");
     }
 
     public VBox createAccountList(MainController mainController) {
@@ -119,5 +119,9 @@ public class AccountListController {
 
     public List<Account> getAccounts() {
         return accounts;
+    }
+
+    public void refreshAccounts() {
+        accounts = accountDAO.getAllAccounts();
     }
 }
