@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.controllers.LoginController"
+           style="-fx-background-color: #0d0d0d;">
+
+    <!-- Login Card -->
+    <VBox alignment="CENTER" spacing="25" maxWidth="450" maxHeight="600"
+          style="-fx-background-color: #1e1e1e;
+                 -fx-background-radius: 15;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 5);
+                 -fx-border-color: #333333;
+                 -fx-border-radius: 15;
+                 -fx-border-width: 1;">
+
+        <padding>
+            <Insets top="50" right="60" bottom="50" left="60"/>
+        </padding>
+
+        <!-- Logo and Title -->
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="🛡️" style="-fx-font-size: 48px;"/>
+            <Label text="IDS Monitor"
+                   style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+            <Label text="Intrusion Detection System"
+                   style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+        </VBox>
+
+        <!-- Separator -->
+        <Separator style="-fx-background-color: #333333;">
+            <VBox.margin>
+                <Insets top="10" bottom="10"/>
+            </VBox.margin>
+        </Separator>
+
+        <!-- Login Form -->
+        <VBox spacing="20">
+            <!-- Username Field -->
+            <VBox spacing="8">
+                <Label text="Username"
+                       style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <TextField fx:id="usernameField"
+                           promptText="Enter your username"
+                           style="-fx-background-color: #2d2d2d;
+                                 -fx-text-fill: white;
+                                 -fx-prompt-text-fill: #808080;
+                                 -fx-border-color: #3d3d3d;
+                                 -fx-border-width: 1;
+                                 -fx-border-radius: 6;
+                                 -fx-background-radius: 6;
+                                 -fx-padding: 12;
+                                 -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Password Field -->
+            <VBox spacing="8">
+                <Label text="Password"
+                       style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordField"
+                               promptText="Enter your password"
+                               style="-fx-background-color: #2d2d2d;
+                                     -fx-text-fill: white;
+                                     -fx-prompt-text-fill: #808080;
+                                     -fx-border-color: #3d3d3d;
+                                     -fx-border-width: 1;
+                                     -fx-border-radius: 6;
+                                     -fx-background-radius: 6;
+                                     -fx-padding: 12;
+                                     -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Remember Me and Forgot Password -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <CheckBox fx:id="rememberMeCheckBox"
+                          text="Remember me"
+                          style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Hyperlink fx:id="forgotPasswordLink"
+                           text="Forgot password?"
+                           onAction="#handleForgotPassword"
+                           style="-fx-text-fill: #2196F3; -fx-font-size: 13px;"/>
+            </HBox>
+
+            <!-- Error Label -->
+            <Label fx:id="errorLabel"
+                   text="Error message"
+                   style="-fx-text-fill: #F44336;
+                          -fx-font-size: 13px;
+                          -fx-background-color: rgba(244, 67, 54, 0.1);
+                          -fx-padding: 10;
+                          -fx-background-radius: 6;
+                          -fx-border-color: #F44336;
+                          -fx-border-radius: 6;
+                          -fx-border-width: 1;"
+                   wrapText="true"
+                   visible="false"/>
+
+            <!-- Login Button -->
+            <Button fx:id="loginButton"
+                    text="Sign In"
+                    onAction="#handleLogin"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #2196F3;
+                           -fx-text-fill: white;
+                           -fx-font-size: 15px;
+                           -fx-font-weight: bold;
+                           -fx-padding: 14;
+                           -fx-cursor: hand;
+                           -fx-background-radius: 6;
+                           -fx-border-radius: 6;">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </Button>
+        </VBox>
+
+        <!-- Footer Info -->
+        <VBox alignment="CENTER" spacing="5">
+            <VBox.margin>
+                <Insets top="20"/>
+            </VBox.margin>
+            <Label text="Default Admin: admin / admin123"
+                   style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+            <Label text="Default User: user / user123"
+                   style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+        </VBox>
+
+    </VBox>
+
+</StackPane>
