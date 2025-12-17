@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.CreateUserController"
+      styleClass="content-view"
+      spacing="20">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+        <Label text="User Management" styleClass="page-title"/>
+        <Label text="Create and manage system users" styleClass="page-subtitle"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" styleClass="settings-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="30">
+            <!-- Create User Form -->
+            <VBox styleClass="settings-section" spacing="20">
+                <Label text="Create New User" styleClass="section-title"/>
+
+                <!-- Message Label -->
+                <Label fx:id="messageLabel" text="Message" wrapText="true"/>
+
+                <!-- Username -->
+                <VBox spacing="8">
+                    <Label text="Username *" styleClass="field-label"/>
+                    <TextField fx:id="usernameField"
+                               promptText="Enter username (min 3 characters)"
+                               styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Email -->
+                <VBox spacing="8">
+                    <Label text="Email Address *" styleClass="field-label"/>
+                    <TextField fx:id="emailField"
+                               promptText="user@example.com"
+                               styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Password -->
+                <VBox spacing="8">
+                    <Label text="Password *" styleClass="field-label"/>
+                    <PasswordField fx:id="passwordField"
+                                   promptText="Enter password (min 6 characters)"
+                                   styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Confirm Password -->
+                <VBox spacing="8">
+                    <Label text="Confirm Password *" styleClass="field-label"/>
+                    <PasswordField fx:id="confirmPasswordField"
+                                   promptText="Re-enter password"
+                                   styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Role -->
+                <VBox spacing="8">
+                    <Label text="User Role *" styleClass="field-label"/>
+                    <ComboBox fx:id="roleCombo" prefWidth="200" styleClass="settings-combo"/>
+                    <Label text="ADMIN: Full access | USER: Standard access | VIEWER: Read-only"
+                           style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Button fx:id="createUserBtn"
+                            text="✅ Create User"
+                            styleClass="action-button success-button"/>
+                    <Button fx:id="clearBtn"
+                            text="🔄 Clear Form"
+                            styleClass="action-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- Existing Users Table -->
+            <VBox styleClass="table-container">
+                <HBox styleClass="table-header" alignment="CENTER_LEFT" spacing="15">
+                    <Label text="Existing Users" styleClass="table-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="refreshBtn"
+                            text="🔄 Refresh"
+                            styleClass="action-button"/>
+                    <Button fx:id="deleteUserBtn"
+                            text="🗑️ Delete Selected"
+                            styleClass="action-button danger-button"/>
+                </HBox>
+
+                <TableView fx:id="usersTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="usernameColumn" text="Username" prefWidth="200"/>
+                        <TableColumn fx:id="roleColumn" text="Role" prefWidth="150"/>
+                        <TableColumn fx:id="emailColumn" text="Email" prefWidth="250"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>
