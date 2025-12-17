@@ -10,7 +10,7 @@ import java.util.Random;
 
 /**
  * Seeds the database with sample data for testing
- * Run this once to populate your database with initial data
+ * Run this once to populate your database   with initial data
  */
 public class DatabaseSeeder {
     private static final Random random = new Random();

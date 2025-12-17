@@ -22,8 +22,8 @@ public class DatabaseManager {
     }
 
     public static DatabaseManager getInstance() {
-        if (instance == null) {
-            synchronized (DatabaseManager.class) {
+        if (instance == null) { //lazy initialization: The object is created only when needed
+            synchronized (DatabaseManager.class) { //Only one thread at a time can enter this block
                 if (instance == null) {
                     instance = new DatabaseManager();
                 }

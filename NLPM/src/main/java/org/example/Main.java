@@ -29,12 +29,8 @@ public class Main extends Application {
             // Initialize authentication
             AuthenticationService authService = AuthenticationService.getInstance();
 
-            // Try auto-login first
-            if (authService.autoLogin()) {
-                loadMainApplication(primaryStage);
-            } else {
-                loadLoginScreen(primaryStage);
-            }
+            // REMOVED AUTO-LOGIN - Always show login screen
+            loadLoginScreen(primaryStage);
 
             // Handle application close
             primaryStage.setOnCloseRequest(event -> {

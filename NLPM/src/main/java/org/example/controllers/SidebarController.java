@@ -23,6 +23,9 @@ public class SidebarController implements Initializable {
     private VBox sidebarRoot;
 
     @FXML
+    private Button createUserBtn;
+
+    @FXML
     private Button dashboardBtn;
 
     @FXML
@@ -61,6 +64,7 @@ public class SidebarController implements Initializable {
         alertsBtn.setOnAction(e -> switchView(alertsBtn, () -> mainController.showAlerts()));
         trafficBtn.setOnAction(e -> switchView(trafficBtn, () -> mainController.showTraffic()));
         settingsBtn.setOnAction(e -> switchView(settingsBtn, () -> mainController.showSettings()));
+        createUserBtn.setOnAction(e -> switchView(createUserBtn, () -> mainController.showCreateUser()));
 
         // Display current user
         if (authService.getCurrentUser() != null) {

@@ -38,7 +38,7 @@
             <Insets bottom="15"/>
         </VBox.margin>
     </VBox>
-
+    <Button fx:id="createUserBtn" text="👥 User Management" styleClass="sidebar-button"/>
     <!-- Navigation Buttons -->
     <Label text="NAVIGATION" styleClass="sidebar-section-title">
         <VBox.margin>

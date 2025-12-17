@@ -135,7 +135,16 @@ public class MainController implements Initializable {
         // For example, show account details or account-specific dashboard
         // showAccountDetails(account);
     }
-
+    public void showCreateUser() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateUser.fxml"));
+            VBox createUser = loader.load();
+            contentContainer.getChildren().clear();
+            contentContainer.getChildren().add(createUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Optional: Show account-specific details view
      *
