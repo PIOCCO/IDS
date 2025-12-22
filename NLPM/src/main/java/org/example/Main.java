@@ -9,8 +9,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.database.DatabaseManager;
-import org.example.database.DatabaseSeeder;
 import org.example.services.AuthenticationService;
+import org.example.services.PacketCaptureService;
+import org.example.services.DetectionEngine;
+import org.example.services.AlertNotificationService;
 
 import java.util.Optional;
 
@@ -23,13 +25,14 @@ public class Main extends Application {
             DatabaseManager dbManager = DatabaseManager.getInstance();
             System.out.println("Database connected successfully");
 
-            // Seed database with sample data if needed
-            seedDatabaseIfNeeded();
+            // Initialize services
+            DetectionEngine.getInstance();
+            AlertNotificationService.getInstance();
 
             // Initialize authentication
             AuthenticationService authService = AuthenticationService.getInstance();
 
-            // REMOVED AUTO-LOGIN - Always show login screen
+            // Always show login screen
             loadLoginScreen(primaryStage);
 
             // Handle application close
@@ -41,19 +44,6 @@ public class Main extends Application {
         } catch (Exception e) {
             e.printStackTrace();
             showDatabaseError();
-        }
-    }
-
-    private void seedDatabaseIfNeeded() {
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Database Setup");
-        confirmDialog.setHeaderText("Initialize Database with Sample Data?");
-        confirmDialog.setContentText("Would you like to populate the database with sample alerts and traffic data?\n\n" +
-                "This is recommended for first-time setup.");
-
-        Optional<ButtonType> result = confirmDialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            DatabaseSeeder.seedDatabase();
         }
     }
 
@@ -75,34 +65,30 @@ public class Main extends Application {
         }
     }
 
-    private void loadMainApplication(Stage primaryStage) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
-            BorderPane root = loader.load();
-
-            Scene scene = new Scene(root, 1400, 800);
-            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-
-            primaryStage.setTitle("IDS Monitor - Intrusion Detection System");
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(true);
-            primaryStage.centerOnScreen();
-            primaryStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void handleApplicationClose(Stage primaryStage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit Application");
         alert.setHeaderText("Are you sure you want to exit?");
-        alert.setContentText("The application will close and database connections will be terminated.");
+        alert.setContentText("All monitoring will stop and database connections will be terminated.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Stop packet capture if running
+            PacketCaptureService captureService = PacketCaptureService.getInstance();
+            if (captureService.isCapturing()) {
+                captureService.stopCapture();
+            }
+            captureService.shutdown();
+
+            // Shutdown detection engine
+            DetectionEngine.getInstance().shutdown();
+
+            // Shutdown notification service
+            AlertNotificationService.getInstance().shutdown();
+
             // Close database connections
             DatabaseManager.getInstance().close();
+
             primaryStage.close();
             System.exit(0);
         }
@@ -121,8 +107,15 @@ public class Main extends Application {
     @Override
     public void stop() {
         // Clean shutdown
-        DatabaseManager.getInstance().close();
-        System.out.println("Application closed successfully");
+        try {
+            PacketCaptureService.getInstance().shutdown();
+            DetectionEngine.getInstance().shutdown();
+            AlertNotificationService.getInstance().shutdown();
+            DatabaseManager.getInstance().close();
+            System.out.println("Application closed successfully");
+        } catch (Exception e) {
+            System.err.println("Error during shutdown: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) {

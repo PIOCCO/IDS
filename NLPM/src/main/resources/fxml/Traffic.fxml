@@ -17,59 +17,75 @@
     <!-- Header -->
     <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
         <Label text="Network Traffic Monitor" styleClass="page-title"/>
-        <Label text="Real-time packet analysis" styleClass="page-subtitle"/>
+        <Label text="Real-time packet capture and analysis" styleClass="page-subtitle"/>
     </HBox>
 
     <!-- Control Panel -->
     <HBox spacing="15" alignment="CENTER_LEFT" styleClass="control-panel">
-        <Label text="Protocol:" styleClass="filter-label"/>
+        <Label text="Interface:" styleClass="filter-label"/>
+        <ComboBox fx:id="interfaceSelector" prefWidth="300" styleClass="filter-combo"/>
+
+        <Label text="Protocol:" styleClass="filter-label">
+            <HBox.margin>
+                <Insets left="20"/>
+            </HBox.margin>
+        </Label>
         <ComboBox fx:id="protocolFilter" prefWidth="120" styleClass="filter-combo"/>
 
         <Region HBox.hgrow="ALWAYS"/>
 
         <Label fx:id="statusLabel" text="Status: Stopped" styleClass="status-label"/>
 
-        <Button fx:id="startMonitorBtn" text="▶️ Start Monitoring" styleClass="action-button success-button"/>
-        <Button fx:id="stopMonitorBtn" text="⏸️ Stop Monitoring" styleClass="action-button danger-button"/>
+        <Button fx:id="startMonitorBtn" text="▶️ Start Capture" styleClass="action-button success-button"/>
+        <Button fx:id="stopMonitorBtn" text="⏸️ Stop Capture" styleClass="action-button danger-button"/>
     </HBox>
 
     <!-- Traffic Statistics -->
     <GridPane hgap="20" vgap="20">
         <columnConstraints>
-            <ColumnConstraints percentWidth="33.33"/>
-            <ColumnConstraints percentWidth="33.33"/>
-            <ColumnConstraints percentWidth="33.33"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
         </columnConstraints>
 
         <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="0">
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
-            <Label text="Total Packets" styleClass="stat-label-small"/>
-            <Label text="45,892" styleClass="stat-value-small"/>
+            <Label text="Packets Captured" styleClass="stat-label-small"/>
+            <Label fx:id="packetsLabel" text="0" styleClass="stat-value-small"/>
         </VBox>
 
         <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="1">
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
-            <Label text="Bandwidth (MB/s)" styleClass="stat-label-small"/>
-            <Label text="12.4" styleClass="stat-value-small"/>
+            <Label text="Data Processed" styleClass="stat-label-small"/>
+            <Label fx:id="bytesLabel" text="0" styleClass="stat-value-small"/>
         </VBox>
 
         <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="2">
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
+            <Label text="Threats Detected" styleClass="stat-label-small"/>
+            <Label fx:id="threatsLabel" text="0" styleClass="stat-value-small"/>
+        </VBox>
+
+        <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="3">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
             <Label text="Active Connections" styleClass="stat-label-small"/>
-            <Label text="127" styleClass="stat-value-small"/>
+            <Label text="0" styleClass="stat-value-small"/>
         </VBox>
     </GridPane>
 
     <!-- Traffic Table -->
     <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
         <HBox styleClass="table-header" alignment="CENTER_LEFT">
-            <Label text="Live Traffic Data" styleClass="table-title"/>
+            <Label text="Live Traffic Data (Last 5 Minutes)" styleClass="table-title"/>
         </HBox>
 
         <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">

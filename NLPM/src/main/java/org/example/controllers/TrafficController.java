@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -7,10 +8,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.example.database.dao.TrafficDAO;
 import org.example.models.TrafficData;
+import org.example.services.PacketCaptureService;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TrafficController implements Initializable {
 
@@ -45,6 +49,9 @@ public class TrafficController implements Initializable {
     private ComboBox<String> protocolFilter;
 
     @FXML
+    private ComboBox<String> interfaceSelector;
+
+    @FXML
     private Button startMonitorBtn;
 
     @FXML
@@ -53,17 +60,29 @@ public class TrafficController implements Initializable {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label packetsLabel;
+
+    @FXML
+    private Label bytesLabel;
+
+    @FXML
+    private Label threatsLabel;
+
     private ObservableList<TrafficData> trafficList;
     private TrafficDAO trafficDAO;
-    private boolean isMonitoring = false;
+    private PacketCaptureService captureService;
+    private Timer refreshTimer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         trafficDAO = new TrafficDAO();
+        captureService = PacketCaptureService.getInstance();
 
         initializeTable();
         initializeControls();
         loadTrafficData();
+        loadNetworkInterfaces();
     }
 
     private void initializeTable() {
@@ -87,7 +106,7 @@ public class TrafficController implements Initializable {
 
     private void initializeControls() {
         protocolFilter.setItems(FXCollections.observableArrayList(
-                "All", "TCP", "UDP", "HTTP", "HTTPS", "ICMP", "DNS"
+                "All", "TCP", "UDP", "HTTP", "HTTPS", "ICMP", "DNS", "SSH", "FTP"
         ));
         protocolFilter.setValue("All");
         protocolFilter.setOnAction(e -> applyProtocolFilter());
@@ -95,11 +114,24 @@ public class TrafficController implements Initializable {
         startMonitorBtn.setOnAction(e -> startMonitoring());
         stopMonitorBtn.setOnAction(e -> stopMonitoring());
         stopMonitorBtn.setDisable(true);
+
+        // Initialize statistics labels
+        if (packetsLabel != null) packetsLabel.setText("0");
+        if (bytesLabel != null) bytesLabel.setText("0");
+        if (threatsLabel != null) threatsLabel.setText("0");
+    }
+
+    private void loadNetworkInterfaces() {
+        String[] interfaces = PacketCaptureService.getAvailableInterfaces();
+        interfaceSelector.setItems(FXCollections.observableArrayList(interfaces));
+        if (interfaces.length > 0) {
+            interfaceSelector.setValue(interfaces[0]);
+        }
     }
 
     private void loadTrafficData() {
         try {
-            List<TrafficData> traffic = trafficDAO.getAllTraffic();
+            List<TrafficData> traffic = trafficDAO.getRecentTraffic(5); // Last 5 minutes
             trafficList = FXCollections.observableArrayList(traffic);
             trafficTable.setItems(trafficList);
 
@@ -133,24 +165,83 @@ public class TrafficController implements Initializable {
     }
 
     private void startMonitoring() {
-        isMonitoring = true;
-        statusLabel.setText("Status: Monitoring Active");
-        statusLabel.setStyle("-fx-text-fill: #4caf50;");
-        startMonitorBtn.setDisable(true);
-        stopMonitorBtn.setDisable(false);
+        String selectedInterface = interfaceSelector.getValue();
+        if (selectedInterface == null || selectedInterface.isEmpty()) {
+            showError("Please select a network interface");
+            return;
+        }
 
-        // TODO: Implement actual network monitoring
-        System.out.println("Network monitoring started");
+        // Extract interface name (before the " - " separator)
+        String interfaceName = selectedInterface.split(" - ")[0];
+
+        boolean started = captureService.startCapture(interfaceName);
+
+        if (started) {
+            statusLabel.setText("Status: Monitoring Active");
+            statusLabel.setStyle("-fx-text-fill: #4caf50;");
+            startMonitorBtn.setDisable(true);
+            stopMonitorBtn.setDisable(false);
+            interfaceSelector.setDisable(true);
+
+            // Start auto-refresh timer
+            startAutoRefresh();
+
+            System.out.println("Network monitoring started on: " + interfaceName);
+        } else {
+            showError("Failed to start packet capture. Make sure you have administrator privileges.");
+        }
     }
 
     private void stopMonitoring() {
-        isMonitoring = false;
+        captureService.stopCapture();
+
         statusLabel.setText("Status: Monitoring Stopped");
         statusLabel.setStyle("-fx-text-fill: #f44336;");
         startMonitorBtn.setDisable(false);
         stopMonitorBtn.setDisable(true);
+        interfaceSelector.setDisable(false);
+
+        // Stop auto-refresh
+        stopAutoRefresh();
 
         System.out.println("Network monitoring stopped");
+    }
+
+    private void startAutoRefresh() {
+        refreshTimer = new Timer(true);
+        refreshTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    loadTrafficData();
+                    updateStatistics();
+                });
+            }
+        }, 0, 2000); // Refresh every 2 seconds
+    }
+
+    private void stopAutoRefresh() {
+        if (refreshTimer != null) {
+            refreshTimer.cancel();
+            refreshTimer = null;
+        }
+    }
+
+    private void updateStatistics() {
+        if (packetsLabel != null) {
+            packetsLabel.setText(String.format("%,d", captureService.getPacketsAnalyzed()));
+        }
+        if (bytesLabel != null) {
+            long bytes = captureService.getBytesProcessed();
+            String formatted = bytes > 1_000_000 ?
+                    String.format("%.2f MB", bytes / 1_000_000.0) :
+                    String.format("%.2f KB", bytes / 1_000.0);
+            bytesLabel.setText(formatted);
+        }
+        if (threatsLabel != null) {
+            threatsLabel.setText(String.valueOf(
+                    org.example.services.DetectionEngine.getInstance().getTotalThreatsDetected()));
+        }
     }
 
     private void showError(String message) {
@@ -163,5 +254,13 @@ public class TrafficController implements Initializable {
 
     public void refreshTrafficData() {
         loadTrafficData();
+        updateStatistics();
+    }
+
+    public void cleanup() {
+        stopAutoRefresh();
+        if (captureService.isCapturing()) {
+            captureService.stopCapture();
+        }
     }
 }
