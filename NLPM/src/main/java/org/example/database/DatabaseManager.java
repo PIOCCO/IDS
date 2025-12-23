@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static DatabaseManager instance;
+    private static DatabaseManager instance = new DatabaseManager();
     private HikariDataSource dataSource;
     private Properties properties;
 
@@ -22,13 +22,13 @@ public class DatabaseManager {
     }
 
     public static DatabaseManager getInstance() {
-        if (instance == null) { //lazy initialization: The object is created only when needed
-            synchronized (DatabaseManager.class) { //Only one thread at a time can enter this block
-                if (instance == null) {
-                    instance = new DatabaseManager();
-                }
-            }
-        }
+//        if (instance == null) { //lazy initialization: The object is created only when needed
+//            synchronized (DatabaseManager.class) { //Only one thread at a time can enter this block
+//                if (instance == null) {
+//                    instance = new DatabaseManager();
+//                }
+//            }
+//        }
         return instance;
     }
 
