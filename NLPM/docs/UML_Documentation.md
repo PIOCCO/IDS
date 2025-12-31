@@ -425,3 +425,52 @@ erDiagram
 > L'architecture suit le pattern **MVC** (Model-View-Controller) avec une couche de services utilisant le pattern **Singleton** pour garantir une instance unique des services critiques. Les données sont stockées dans **PostgreSQL** via le pattern **DAO** (Data Access Object).
 >
 > Le système supporte trois rôles d'utilisateurs: **Administrateur** (accès complet), **Utilisateur** (monitoring sans admin), et **Viewer** (lecture seule).
+> 
+
+
+```mermaid
+classDiagram
+    class Main
+    class AuthenticationService
+    class PacketCaptureService
+    class DetectionEngine
+    class DatabaseManager
+    class TrafficDAO
+    class AlertDAO
+    class TrafficController
+    class LoginController
+    class TrafficData
+    class SecurityAlert
+    class User
+    
+    Main --> AuthenticationService
+    Main --> DatabaseManager
+    Main --> DetectionEngine
+    
+    TrafficController --> PacketCaptureService
+    TrafficController --> TrafficDAO
+    
+    LoginController --> AuthenticationService
+    
+    PacketCaptureService --> DetectionEngine
+    PacketCaptureService --> TrafficDAO
+    
+    DetectionEngine --> AlertDAO
+    
+    TrafficDAO --> DatabaseManager
+    AlertDAO --> DatabaseManager
+    
+    TrafficDAO ..> TrafficData
+    AlertDAO ..> SecurityAlert
+    AuthenticationService ..> User
+
+classDiagram
+    class Controllers["Controllers (LoginController, TrafficController)"]
+    class Services["Services (AuthenticationService, PacketCaptureService, DetectionEngine)"]
+    class DAOs["DAOs (TrafficDAO, AlertDAO, DatabaseManager)"]
+    class Models["Models (User, TrafficData, SecurityAlert)"]
+    
+    Controllers --> Services
+    Services --> DAOs
+    DAOs --> Models
+```
