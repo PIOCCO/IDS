@@ -1,0 +1,16 @@
+[2025-12-24 16:38:11] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 16:44:11] USER:yyyyas | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 16:44:29] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 16:52:49] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 16:54:12] USER:yas | ACTION:CLEAR_VISIBLE_TRAFFIC | DETAILS:Cleared 0 visible traffic records
+[2025-12-24 16:54:45] USER:yas | ACTION:CLEAR_ALL_TRAFFIC | DETAILS:Cleared all traffic data from database
+[2025-12-24 17:05:55] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 17:07:11] USER:user | ACTION:START_MONITORING | DETAILS:Started packet capture on interface: \Device\NPF_{D9B7A0F8-4AA0-45D6-B883-EC3AFA608459}
+[2025-12-24 17:19:17] USER:admin | ACTION:CLEAR_VISIBLE_TRAFFIC | DETAILS:Cleared 13 visible traffic records
+[2025-12-24 17:19:24] USER:admin | ACTION:START_MONITORING | DETAILS:Started packet capture on interface: \Device\NPF_{D9B7A0F8-4AA0-45D6-B883-EC3AFA608459}
+[2025-12-24 17:28:29] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-24 17:29:20] USER:admin | ACTION:START_MONITORING | DETAILS:Started packet capture on interface: \Device\NPF_{6D55C71C-6404-4691-8D82-37C0092D1D27}
+[2025-12-31 12:42:57] USER:admin | ACTION:START_MONITORING | DETAILS:Started packet capture on interface: \Device\NPF_{D9B7A0F8-4AA0-45D6-B883-EC3AFA608459}
+[2025-12-31 12:55:39] USER:admin | ACTION:START_MONITORING | DETAILS:Started packet capture on interface: \Device\NPF_{D9B7A0F8-4AA0-45D6-B883-EC3AFA608459}
+[2025-12-31 12:56:55] USER:admin | ACTION:LOGOUT | DETAILS:User logged out from the system
+[2025-12-31 13:10:54] USER:admin | ACTION:CLEAR_VISIBLE_TRAFFIC | DETAILS:Cleared 15 visible traffic records

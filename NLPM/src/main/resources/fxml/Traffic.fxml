@@ -78,14 +78,27 @@
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
             <Label text="Active Connections" styleClass="stat-label-small"/>
-            <Label text="0" styleClass="stat-value-small"/>
+            <Label fx:id="activeConnectionsLabel" text="0" styleClass="stat-value-small"/>
         </VBox>
     </GridPane>
 
     <!-- Traffic Table -->
     <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
-        <HBox styleClass="table-header" alignment="CENTER_LEFT">
+        <HBox styleClass="table-header" alignment="CENTER_LEFT" spacing="15">
             <Label text="Live Traffic Data (Last 5 Minutes)" styleClass="table-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="reloadBtn"
+                    text="🔄 Reload"
+                    styleClass="action-button"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #2196F3; -fx-text-fill: white;"/>
+            <Button fx:id="exportBtn"
+                    text="📤 Export CSV"
+                    styleClass="action-button primary-button"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15;"/>
+            <Button fx:id="clearTrafficBtn"
+                    text="🗑️ Clear Traffic"
+                    styleClass="action-button danger-button"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15;"/>
         </HBox>
 
         <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">

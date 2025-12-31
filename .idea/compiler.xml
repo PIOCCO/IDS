@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="settings-manager" />
         <module name="ids-monitor" />
+        <module name="IDS-Monitor" />
       </profile>
     </annotationProcessing>
   </component>

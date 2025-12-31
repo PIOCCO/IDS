@@ -32,13 +32,16 @@
         <Label fx:id="currentUserLabel"
                text="👤 Admin"
                style="-fx-text-fill: #4CAF50; -fx-font-size: 13px; -fx-font-weight: bold;"/>
-        <Label text="Logged In"
+        <Label fx:id="userRoleLabel"
+               text="Administrator"
                style="-fx-text-fill: #b0b0b0; -fx-font-size: 11px;"/>
+        <Label text="Logged In"
+               style="-fx-text-fill: #808080; -fx-font-size: 10px;"/>
         <VBox.margin>
             <Insets bottom="15"/>
         </VBox.margin>
     </VBox>
-    <Button fx:id="createUserBtn" text="👥 User Management" styleClass="sidebar-button"/>
+
     <!-- Navigation Buttons -->
     <Label text="NAVIGATION" styleClass="sidebar-section-title">
         <VBox.margin>
@@ -51,6 +54,21 @@
     <Button fx:id="trafficBtn" text="🌐 Traffic Monitor" styleClass="sidebar-button"/>
     <Button fx:id="reportsBtn" text="📄 Reports" styleClass="sidebar-button"/>
 
+    <!-- Admin Section - Hidden for non-admin users -->
+    <VBox fx:id="adminSection" spacing="5">
+        <Label text="ADMINISTRATION" styleClass="sidebar-section-title">
+            <VBox.margin>
+                <Insets top="30" bottom="10"/>
+            </VBox.margin>
+        </Label>
+
+        <Button fx:id="createUserBtn"
+                text="👥 User Management"
+                styleClass="sidebar-button"
+                style="-fx-border-color: #FFD700; -fx-border-width: 0 0 0 3;"/>
+    </VBox>
+
+    <!-- Configuration Section -->
     <Label text="CONFIGURATION" styleClass="sidebar-section-title">
         <VBox.margin>
             <Insets top="30" bottom="10"/>
@@ -71,7 +89,7 @@
     <Button fx:id="logoutBtn"
             text="🚪 Logout"
             onAction="#handleLogout"
-            style="-fx-background-color: #F44336; 
+            style="-fx-background-color: #F44336;
                    -fx-text-fill: white;
                    -fx-font-size: 14px;
                    -fx-padding: 12 15;
@@ -90,8 +108,8 @@
         </VBox.margin>
         <Label text="System Status" styleClass="status-title"/>
         <Label text="● Active" styleClass="status-active"/>
-        <Label text="CPU: 23%" styleClass="status-info"/>
-        <Label text="Memory: 45%" styleClass="status-info"/>
+        <Label text="Version 1.0.0"
+               style="-fx-text-fill: #808080; -fx-font-size: 10px;"/>
     </VBox>
 
 </VBox>

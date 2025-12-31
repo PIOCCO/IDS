@@ -79,8 +79,29 @@ public class LoginController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Password Recovery");
         alert.setHeaderText("Default Credentials");
-        alert.setContentText("Admin Login:\nUsername: admin\nPassword: admin123\n\nUser Login:\nUsername: user\nPassword: user123");
+        alert.setContentText(
+                "Admin Login:\nUsername: admin\nPassword: admin123\n\nUser Login:\nUsername: user\nPassword: user123");
         alert.showAndWait();
+    }
+
+    /**
+     * Quick login as Admin with default credentials
+     */
+    @FXML
+    private void handleQuickAdminLogin() {
+        usernameField.setText("admin");
+        passwordField.setText("admin123");
+        handleLogin();
+    }
+
+    /**
+     * Quick login as User with default credentials
+     */
+    @FXML
+    private void handleQuickUserLogin() {
+        usernameField.setText("user");
+        passwordField.setText("user123");
+        handleLogin();
     }
 
     private void showError(String message) {
