@@ -53,7 +53,7 @@
     <!-- Alerts Table with Direction Column -->
     <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
         <HBox styleClass="table-header" alignment="CENTER_LEFT">
-            <Label text="Security Alerts & Threats" styleClass="table-title"/>
+            <Label text="Security Alerts &amp; Threats" styleClass="table-title"/>
             <Label text="  •  Direction-aware detection"
                    style="-fx-text-fill: #808080; -fx-font-size: 12px;"/>
         </HBox>
