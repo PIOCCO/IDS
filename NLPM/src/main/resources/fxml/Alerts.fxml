@@ -14,39 +14,80 @@
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
 
-    <!-- Header -->
+    <!-- Header with Inbound Threats Counter -->
     <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
         <Label text="Security Alerts" styleClass="page-title"/>
         <Label text="Monitor and manage security incidents" styleClass="page-subtitle"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="inboundThreatsLabel"
+               text="⚠️ Inbound Threats: 0"
+               style="-fx-text-fill: #F44336; -fx-font-size: 14px; -fx-font-weight: bold;
+                      -fx-background-color: rgba(244, 67, 54, 0.1); -fx-padding: 8 15;
+                      -fx-background-radius: 6; -fx-border-color: #F44336; -fx-border-radius: 6; -fx-border-width: 1;"/>
     </HBox>
 
-    <!-- Filters and Actions -->
+    <!-- Enhanced Filters and Actions -->
     <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
-        <Label text="Filter by Severity:" styleClass="filter-label"/>
-        <ComboBox fx:id="severityFilter" prefWidth="150" styleClass="filter-combo"/>
+        <Label text="Severity:" styleClass="filter-label"/>
+        <ComboBox fx:id="severityFilter" prefWidth="120" styleClass="filter-combo"/>
 
-        <TextField fx:id="searchField" promptText="Search alerts..." prefWidth="250" styleClass="search-field"/>
+        <Label text="Direction:" styleClass="filter-label">
+            <HBox.margin>
+                <Insets left="20"/>
+            </HBox.margin>
+        </Label>
+        <ComboBox fx:id="directionFilter" prefWidth="120" styleClass="filter-combo"/>
+
+        <TextField fx:id="searchField" promptText="Search alerts..." prefWidth="250" styleClass="search-field">
+            <HBox.margin>
+                <Insets left="20"/>
+            </HBox.margin>
+        </TextField>
 
         <Region HBox.hgrow="ALWAYS"/>
 
-        <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button"/>
+        <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button primary-button"/>
         <Button text="📥 Export" styleClass="action-button"/>
     </HBox>
 
-    <!-- Alerts Table -->
+    <!-- Alerts Table with Direction Column -->
     <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
+        <HBox styleClass="table-header" alignment="CENTER_LEFT">
+            <Label text="Security Alerts & Threats" styleClass="table-title"/>
+            <Label text="  •  Direction-aware detection"
+                   style="-fx-text-fill: #808080; -fx-font-size: 12px;"/>
+        </HBox>
+
         <TableView fx:id="alertsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="idColumn" text="ID" prefWidth="100"/>
-                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="100"/>
-                <TableColumn fx:id="typeColumn" text="Type" prefWidth="150"/>
-                <TableColumn fx:id="sourceColumn" text="Source IP" prefWidth="130"/>
-                <TableColumn fx:id="destinationColumn" text="Destination IP" prefWidth="130"/>
-                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250"/>
-                <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="180"/>
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="90"/>
+                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="90"/>
+                <TableColumn fx:id="directionColumn" text="Direction" prefWidth="110"/>
+                <TableColumn fx:id="typeColumn" text="Type" prefWidth="140"/>
+                <TableColumn fx:id="sourceColumn" text="Source IP" prefWidth="120"/>
+                <TableColumn fx:id="destinationColumn" text="Destination IP" prefWidth="120"/>
+                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="280"/>
+                <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="160"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="80"/>
             </columns>
         </TableView>
     </VBox>
+
+    <!-- Info Box -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-background-color: rgba(33, 150, 243, 0.1); -fx-padding: 15;
+                 -fx-background-radius: 8; -fx-border-color: #2196F3; -fx-border-radius: 8; -fx-border-width: 1;">
+        <Label text="ℹ️" style="-fx-font-size: 16px;"/>
+        <VBox spacing="5">
+            <Label text="Alert Direction Guide:"
+                   style="-fx-text-fill: #2196F3; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+            <Label text="⬇️ INBOUND: External traffic coming to your network (potential threats)"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+            <Label text="⬆️ OUTBOUND: Traffic from your network to external systems (usually safe)"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+            <Label text="🔄 LOCAL: Internal network traffic between local systems"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+        </VBox>
+    </HBox>
 
 </VBox>

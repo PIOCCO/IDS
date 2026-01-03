@@ -54,6 +54,18 @@
     <Button fx:id="trafficBtn" text="🌐 Traffic Monitor" styleClass="sidebar-button"/>
     <Button fx:id="reportsBtn" text="📄 Reports" styleClass="sidebar-button"/>
 
+    <!-- Testing Section -->
+    <Label text="TESTING" styleClass="sidebar-section-title">
+        <VBox.margin>
+            <Insets top="30" bottom="10"/>
+        </VBox.margin>
+    </Label>
+
+    <Button fx:id="threatSimulatorBtn"
+            text="🚨 Threat Simulator"
+            styleClass="sidebar-button"
+            style="-fx-border-color: #FF9800; -fx-border-width: 0 0 0 3;"/>
+
     <!-- Admin Section - Hidden for non-admin users -->
     <VBox fx:id="adminSection" spacing="5">
         <Label text="ADMINISTRATION" styleClass="sidebar-section-title">

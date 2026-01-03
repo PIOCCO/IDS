@@ -6,8 +6,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.control.ScrollPane;
 import org.example.models.Account;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,6 +29,7 @@ public class MainController implements Initializable {
     private AlertsController alertsController;
     private TrafficController trafficController;
     private SettingsController settingsController;
+    private ThreatSimulatorController threatSimulatorController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,43 +101,6 @@ public class MainController implements Initializable {
         }
     }
 
-    /**
-     * Called when an account is selected in the account list
-     * This method can be used to update views or perform actions based on the selected account
-     *
-     * @param account The selected Account object
-     */
-    public void onAccountSelected(Account account) {
-        if (account == null) {
-            System.err.println("Warning: Null account selected");
-            return;
-        }
-
-        // Log the selection
-        System.out.println("Account selected: " + account.getName() + " (" + account.getEmail() + ")");
-
-        // Update dashboard if it's currently loaded
-        if (dashboardController != null) {
-            // You can add methods to update dashboard based on selected account
-            // dashboardController.updateForAccount(account);
-        }
-
-        // Update alerts view if it's currently loaded
-        if (alertsController != null) {
-            // Filter alerts by account if needed
-            // alertsController.filterByAccount(account);
-        }
-
-        // Update traffic view if it's currently loaded
-        if (trafficController != null) {
-            // Filter traffic by account if needed
-            // trafficController.filterByAccount(account);
-        }
-
-        // You can also switch to a specific view automatically
-        // For example, show account details or account-specific dashboard
-        // showAccountDetails(account);
-    }
     public void showCreateUser() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateUser.fxml"));
@@ -145,19 +111,53 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    /**
+     * NEW: Show Threat Simulator view
+     */
+    public void showThreatSimulator() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ThreatSimulator.fxml"));
+            ScrollPane threatSimulator = loader.load();
+            threatSimulatorController = loader.getController();
+            contentContainer.getChildren().clear();
+            contentContainer.getChildren().add(threatSimulator);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Called when an account is selected in the account list
+     */
+    public void onAccountSelected(Account account) {
+        if (account == null) {
+            System.err.println("Warning: Null account selected");
+            return;
+        }
+
+        System.out.println("Account selected: " + account.getName() + " (" + account.getEmail() + ")");
+
+        if (dashboardController != null) {
+            // dashboardController.updateForAccount(account);
+        }
+
+        if (alertsController != null) {
+            // alertsController.filterByAccount(account);
+        }
+
+        if (trafficController != null) {
+            // trafficController.filterByAccount(account);
+        }
+    }
+
     /**
      * Optional: Show account-specific details view
-     *
-     * @param account The account to display details for
      */
     private void showAccountDetails(Account account) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AccountDetails.fxml"));
             VBox accountDetails = loader.load();
-
-            // Pass the account to the details controller
-            // AccountDetailsController controller = loader.getController();
-            // controller.setAccount(account);
 
             contentContainer.getChildren().clear();
             contentContainer.getChildren().add(accountDetails);

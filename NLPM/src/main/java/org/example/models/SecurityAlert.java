@@ -11,6 +11,7 @@ public class SecurityAlert {
     private String description;
     private LocalDateTime timestamp;
     private String status;
+    private String direction; // NEW: INBOUND, OUTBOUND, LOCAL
 
     public SecurityAlert(String id, String severity, String type, String sourceIP,
                          String destinationIP, String description, LocalDateTime timestamp) {
@@ -22,6 +23,7 @@ public class SecurityAlert {
         this.description = description;
         this.timestamp = timestamp;
         this.status = "Active";
+        this.direction = "UNKNOWN"; // Default
     }
 
     // Getters and Setters
@@ -48,5 +50,26 @@ public class SecurityAlert {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-}
 
+    public String getDirection() { return direction; }
+    public void setDirection(String direction) { this.direction = direction; }
+
+    /**
+     * Get direction with emoji for UI display
+     */
+    public String getDirectionWithEmoji() {
+        return switch (direction) {
+            case "INBOUND" -> "⬇️ " + direction;
+            case "OUTBOUND" -> "⬆️ " + direction;
+            case "LOCAL" -> "🔄 " + direction;
+            default -> "❓ " + direction;
+        };
+    }
+
+    /**
+     * Check if this is an inbound threat
+     */
+    public boolean isInboundThreat() {
+        return "INBOUND".equals(direction);
+    }
+}

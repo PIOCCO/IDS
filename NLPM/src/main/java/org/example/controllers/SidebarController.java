@@ -22,6 +22,9 @@ import java.util.ResourceBundle;
 public class SidebarController implements Initializable {
 
     @FXML
+    private Button threatSimulatorBtn;
+
+    @FXML
     private VBox sidebarRoot;
 
     @FXML
@@ -75,6 +78,11 @@ public class SidebarController implements Initializable {
         alertsBtn.setOnAction(e -> switchView(alertsBtn, () -> mainController.showAlerts()));
         trafficBtn.setOnAction(e -> switchView(trafficBtn, () -> mainController.showTraffic()));
         settingsBtn.setOnAction(e -> switchView(settingsBtn, () -> mainController.showSettings()));
+
+        // NEW: Threat Simulator button
+        if (threatSimulatorBtn != null) {
+            threatSimulatorBtn.setOnAction(e -> switchView(threatSimulatorBtn, () -> mainController.showThreatSimulator()));
+        }
 
         // Only initialize createUserBtn if user is admin
         if (createUserBtn != null && !createUserBtn.isDisabled()) {
