@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane fx:controller="org.example.controllers.ThreatSimulatorController"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fitToWidth="true"
+            fitToHeight="true"
+            styleClass="settings-scroll"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+
+    <VBox
+          styleClass="content-view"
+          spacing="20">
+
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+            <Label text="🚨 Threat Simulator" styleClass="page-title"/>
+            <Label text="Test your IDS detection capabilities" styleClass="page-subtitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="🔴 STOPPED"
+                   style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- Warning Box -->
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-background-color: rgba(244, 67, 54, 0.1); -fx-padding: 15;
+                 -fx-background-radius: 8; -fx-border-color: #F44336; -fx-border-radius: 8; -fx-border-width: 2;">
+            <Label text="⚠️" style="-fx-font-size: 24px;"/>
+            <VBox spacing="5">
+                <Label text="WARNING: Testing Tool Only!"
+                       style="-fx-text-fill: #F44336; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <Label text="This simulator will trigger IDS alerts by listening on dangerous ports (trojan/backdoor ports)."
+                       style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                <Label text="⚠️ Only use on your LOCAL machine for testing! Do NOT use on production systems!"
+                       style="-fx-text-fill: #FF9800; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Main Content Grid -->
+        <GridPane hgap="20" vgap="20">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
+
+            <!-- Left Column: Simulator Controls -->
+            <VBox spacing="15" GridPane.columnIndex="0" GridPane.rowIndex="0">
+
+                <!-- Simulator Control Panel -->
+                <VBox styleClass="settings-section" spacing="15">
+                    <Label text="🎛️ Simulator Controls" styleClass="section-title"/>
+
+                    <VBox spacing="10">
+                        <Label text="Start/Stop Threat Simulator"
+                               style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+
+                        <HBox spacing="10">
+                            <Button fx:id="startSimulatorBtn"
+                                    text="▶️ Start Simulator"
+                                    styleClass="action-button success-button"
+                                    prefWidth="180"/>
+
+                            <Button fx:id="stopSimulatorBtn"
+                                    text="⏹️ Stop Simulator"
+                                    styleClass="action-button danger-button"
+                                    prefWidth="180"/>
+                        </HBox>
+
+                        <Label text="This will listen on dangerous ports and trigger IDS alerts"
+                               style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                    </VBox>
+
+                    <Separator style="-fx-background-color: #333333;"/>
+
+                    <!-- Attack Simulation Panel -->
+                    <VBox spacing="10">
+                        <Label text="Target Configuration"
+                               style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="IP:" style="-fx-text-fill: #b0b0b0;"/>
+                            <TextField fx:id="targetIPField"
+                                       promptText="127.0.0.1"
+                                       styleClass="settings-field"
+                                       prefWidth="150"/>
+
+                            <Label text="Port:" style="-fx-text-fill: #b0b0b0;">
+                                <HBox.margin>
+                                    <Insets left="20"/>
+                                </HBox.margin>
+                            </Label>
+                            <TextField fx:id="targetPortField"
+                                       promptText="1337"
+                                       styleClass="settings-field"
+                                       prefWidth="100"/>
+                        </HBox>
+                    </VBox>
+
+                    <Separator style="-fx-background-color: #333333;"/>
+
+                    <!-- Attack Simulation Buttons -->
+                    <VBox spacing="10">
+                        <Label text="Simulate Attacks (for testing)"
+                               style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+                        <Button fx:id="portScanBtn"
+                                text="🔍 Simulate Port Scan"
+                                styleClass="action-button"
+                                style="-fx-background-color: #FF9800;"
+                                maxWidth="Infinity"/>
+
+                        <Button fx:id="synFloodBtn"
+                                text="💥 Simulate SYN Flood (10s)"
+                                styleClass="action-button"
+                                style="-fx-background-color: #F44336;"
+                                maxWidth="Infinity"/>
+
+                        <Button fx:id="testConnectionBtn"
+                                text="🔌 Test Connection"
+                                styleClass="action-button primary-button"
+                                maxWidth="Infinity"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Dangerous Ports List -->
+                <VBox fx:id="portsListBox"
+                      styleClass="settings-section"
+                      spacing="8"
+                      style="-fx-background-color: rgba(244, 67, 54, 0.05);">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                </VBox>
+
+            </VBox>
+
+            <!-- Right Column: Activity Log -->
+            <VBox spacing="15" GridPane.columnIndex="1" GridPane.rowIndex="0" VBox.vgrow="ALWAYS">
+
+                <VBox styleClass="table-container" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="table-header" alignment="CENTER_LEFT">
+                        <Label text="📋 Activity Log" styleClass="table-title"/>
+                    </HBox>
+
+                    <TextArea fx:id="logArea"
+                              editable="false"
+                              wrapText="true"
+                              VBox.vgrow="ALWAYS"
+                              style="-fx-control-inner-background: #1a1a1a;
+                                 -fx-text-fill: #ffffff;
+                                 -fx-font-family: 'Courier New', monospace;
+                                 -fx-font-size: 12px;
+                                 -fx-background-color: transparent;">
+                        <VBox.margin>
+                            <Insets top="0"/>
+                        </VBox.margin>
+                    </TextArea>
+                </VBox>
+
+                <!-- Instructions Box -->
+                <VBox spacing="10"
+                      style="-fx-background-color: rgba(33, 150, 243, 0.1); -fx-padding: 15;
+                         -fx-background-radius: 8; -fx-border-color: #2196F3; -fx-border-radius: 8; -fx-border-width: 1;">
+                    <Label text="📖 How to Use"
+                           style="-fx-text-fill: #2196F3; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+                    <VBox spacing="5">
+                        <Label text="1️⃣ Click 'Start Simulator' to listen on dangerous ports"
+                               style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                        <Label text="2️⃣ Go to 'Traffic Monitor' and start packet capture"
+                               style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                        <Label text="3️⃣ Click 'Test Connection' or 'Simulate Port Scan'"
+                               style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                        <Label text="4️⃣ Check 'Alerts' tab to see detected threats!"
+                               style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                        <Label text="5️⃣ Stop simulator when done testing"
+                               style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <Separator style="-fx-background-color: #2196F3;"/>
+
+                    <Label text="💡 Tip: Use 127.0.0.1 (localhost) for safe testing!"
+                           style="-fx-text-fill: #4CAF50; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                </VBox>
+
+            </VBox>
+
+        </GridPane>
+
+    </VBox>
+
+</ScrollPane>
