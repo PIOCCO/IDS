@@ -58,6 +58,12 @@ public class AlertsController implements Initializable {
     private Button refreshBtn;
 
     @FXML
+    private Button exportBtn;
+
+    @FXML
+    private Button clearAlertsBtn;
+
+    @FXML
     private Label inboundThreatsLabel; // NEW - show inbound threat count
 
     private ObservableList<SecurityAlert> alertsList;
@@ -73,6 +79,12 @@ public class AlertsController implements Initializable {
         loadAlerts();
 
         refreshBtn.setOnAction(e -> loadAlerts());
+        if (exportBtn != null) {
+            exportBtn.setOnAction(e -> handleExportAlerts());
+        }
+        if (clearAlertsBtn != null) {
+            clearAlertsBtn.setOnAction(e -> handleClearAlerts());
+        }
         severityFilter.setOnAction(e -> applyFilters());
         if (directionFilter != null) {
             directionFilter.setOnAction(e -> applyFilters());
@@ -81,11 +93,13 @@ public class AlertsController implements Initializable {
     }
 
     private void initializeTable() {
-        idColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getId()));
+        // Alerts table stays flexible with horizontal scroll
 
-        severityColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSeverity()));
+        idColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getId()));
+
+        severityColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSeverity()));
 
         // Color code severity
         severityColumn.setCellFactory(column -> new TableCell<SecurityAlert, String>() {
@@ -109,29 +123,28 @@ public class AlertsController implements Initializable {
             }
         });
 
-        typeColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getType()));
+        typeColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getType()));
 
-        sourceColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSourceIP()));
+        sourceColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSourceIP()));
 
-        destinationColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDestinationIP()));
+        destinationColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDestinationIP()));
 
-        descriptionColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescription()));
+        descriptionColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescription()));
 
-        timestampColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTimestamp().toString()));
+        timestampColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getTimestamp().toString()));
 
-        statusColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
+        statusColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
 
         // NEW: Direction column with emoji
         if (directionColumn != null) {
-            directionColumn.setCellValueFactory(cellData ->
-                    new javafx.beans.property.SimpleStringProperty(
-                            cellData.getValue().getDirectionWithEmoji()));
+            directionColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                    cellData.getValue().getDirectionWithEmoji()));
 
             // Color code direction
             directionColumn.setCellFactory(column -> new TableCell<SecurityAlert, String>() {
@@ -160,15 +173,13 @@ public class AlertsController implements Initializable {
 
     private void initializeFilters() {
         severityFilter.setItems(FXCollections.observableArrayList(
-                "All", "Critical", "High", "Medium", "Low", "Info"
-        ));
+                "All", "Critical", "High", "Medium", "Low", "Info"));
         severityFilter.setValue("All");
 
         // NEW: Direction filter
         if (directionFilter != null) {
             directionFilter.setItems(FXCollections.observableArrayList(
-                    "All", "INBOUND", "OUTBOUND", "LOCAL", "UNKNOWN"
-            ));
+                    "All", "INBOUND", "OUTBOUND", "LOCAL", "UNKNOWN"));
             directionFilter.setValue("All");
         }
     }
@@ -203,7 +214,8 @@ public class AlertsController implements Initializable {
     }
 
     private void applyFilters() {
-        if (alertsList == null) return;
+        if (alertsList == null)
+            return;
 
         String severityValue = severityFilter.getValue();
         String directionValue = directionFilter != null ? directionFilter.getValue() : "All";
@@ -240,6 +252,171 @@ public class AlertsController implements Initializable {
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
+    }
+
+    private void showSuccess(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
+        alert.showAndWait();
+    }
+
+    /**
+     * Export alerts data to CSV file
+     */
+    private void handleExportAlerts() {
+        try {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Export Alerts Data");
+            fileChooser.setInitialFileName("alerts_export_" +
+                    java.time.LocalDateTime.now().format(
+                            java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
+                    + ".csv");
+            fileChooser.getExtensionFilters().add(
+                    new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+            javafx.stage.Window window = null;
+            if (alertsTable != null && alertsTable.getScene() != null) {
+                window = alertsTable.getScene().getWindow();
+            }
+
+            java.io.File file = fileChooser.showSaveDialog(window);
+
+            if (file != null) {
+                exportAlertsToCSV(file);
+                showSuccess("Alerts exported successfully to: " + file.getName());
+            }
+        } catch (Exception e) {
+            System.err.println("Error exporting alerts: " + e.getMessage());
+            e.printStackTrace();
+            showError("Failed to export alerts: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Export alerts list to CSV file
+     */
+    private void exportAlertsToCSV(java.io.File file) throws java.io.IOException {
+        try (java.io.PrintWriter writer = new java.io.PrintWriter(file)) {
+            // Write header
+            writer.println("ID,Severity,Direction,Type,Source IP,Destination IP,Description,Timestamp,Status");
+
+            // Write data - use filtered list if available, otherwise use main list
+            var dataToExport = (filteredAlertsList != null && !filteredAlertsList.isEmpty())
+                    ? filteredAlertsList
+                    : alertsList;
+
+            if (dataToExport != null) {
+                for (SecurityAlert alert : dataToExport) {
+                    writer.println(String.format("%s,%s,%s,%s,%s,%s,\"%s\",%s,%s",
+                            alert.getId(),
+                            alert.getSeverity(),
+                            alert.getDirection(),
+                            alert.getType(),
+                            alert.getSourceIP(),
+                            alert.getDestinationIP(),
+                            alert.getDescription().replace("\"", "\"\""), // Escape quotes
+                            alert.getTimestamp(),
+                            alert.getStatus()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Handle clear alerts button - shows confirmation dialog
+     */
+    private void handleClearAlerts() {
+        try {
+            Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDialog.setTitle("Clear Alerts");
+            confirmDialog.setHeaderText("Clear all alerts?");
+            confirmDialog.setContentText("Choose an option:");
+            org.example.utils.DialogUtils.styleAlert(confirmDialog);
+
+            ButtonType clearAllBtn = new ButtonType("Clear All (Database)");
+            ButtonType clearVisibleBtn = new ButtonType("Clear Visible Only");
+            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            confirmDialog.getButtonTypes().setAll(clearAllBtn, clearVisibleBtn, cancelBtn);
+
+            var result = confirmDialog.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == clearAllBtn) {
+                    clearAllAlerts();
+                } else if (result.get() == clearVisibleBtn) {
+                    clearVisibleAlerts();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error handling clear alerts: " + e.getMessage());
+            e.printStackTrace();
+            showError("Failed to clear alerts: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Clear all alerts from database
+     */
+    private void clearAllAlerts() {
+        try {
+            boolean success = alertDAO.deleteAllAlerts();
+
+            if (success) {
+                // Clear the table view
+                if (alertsList != null) {
+                    alertsList.clear();
+                }
+                if (filteredAlertsList != null) {
+                    filteredAlertsList.clear();
+                }
+                if (alertsTable != null) {
+                    alertsTable.setItems(alertsList);
+                }
+
+                // Update inbound threats counter
+                if (inboundThreatsLabel != null) {
+                    inboundThreatsLabel.setText("⚠️ Inbound Threats: 0");
+                }
+
+                showSuccess("All alerts have been cleared successfully");
+                System.out.println("All alerts cleared");
+            } else {
+                showError("Failed to clear alerts");
+            }
+        } catch (Exception e) {
+            System.err.println("Error clearing alerts: " + e.getMessage());
+            e.printStackTrace();
+            showError("An error occurred while clearing alerts: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Clear only visible (filtered) alerts from view
+     */
+    private void clearVisibleAlerts() {
+        try {
+            int count = filteredAlertsList != null ? filteredAlertsList.size()
+                    : (alertsList != null ? alertsList.size() : 0);
+
+            // Clear visible items from table
+            if (filteredAlertsList != null) {
+                filteredAlertsList.clear();
+            }
+            if (alertsTable != null) {
+                alertsTable.setItems(filteredAlertsList);
+            }
+
+            showSuccess(count + " visible alerts cleared from view");
+            System.out.println("Cleared " + count + " visible alerts");
+        } catch (Exception e) {
+            System.err.println("Error clearing visible alerts: " + e.getMessage());
+            e.printStackTrace();
+            showError("An error occurred while clearing visible alerts: " + e.getMessage());
+        }
     }
 }

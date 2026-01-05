@@ -21,8 +21,8 @@ public class UserDAO {
         String sql = "SELECT * FROM " + schema + ".users ORDER BY created_at DESC";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 users.add(extractUserFromResultSet(rs));
@@ -39,7 +39,7 @@ public class UserDAO {
         String sql = "SELECT * FROM " + schema + ".users WHERE username = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
@@ -60,7 +60,7 @@ public class UserDAO {
                 "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPassword()); // Already hashed
@@ -80,7 +80,7 @@ public class UserDAO {
         String sql = "DELETE FROM " + schema + ".users WHERE username = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
             return pstmt.executeUpdate() > 0;
@@ -95,13 +95,54 @@ public class UserDAO {
         String sql = "UPDATE " + schema + ".users SET is_active = ? WHERE username = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setBoolean(1, isActive);
             pstmt.setString(2, username);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error updating user status: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateUser(User user) {
+        String sql = "UPDATE " + schema + ".users SET email = ?, password_hash = ? WHERE username = ?";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getPassword()); // Already hashed
+            pstmt.setString(3, user.getUsername());
+            int result = pstmt.executeUpdate();
+            System.out.println("updateUser: rows affected = " + result + " for user: " + user.getUsername());
+            return result > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating user: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Update only the email field (does not change password)
+     */
+    public boolean updateUserEmail(String username, String email) {
+        String sql = "UPDATE " + schema + ".users SET email = ? WHERE username = ?";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, email);
+            pstmt.setString(2, username);
+            int result = pstmt.executeUpdate();
+            System.out.println(
+                    "updateUserEmail: rows affected = " + result + " for user: " + username + ", email: " + email);
+            return result > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating user email: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

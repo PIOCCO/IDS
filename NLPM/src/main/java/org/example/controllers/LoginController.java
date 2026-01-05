@@ -81,6 +81,7 @@ public class LoginController implements Initializable {
         alert.setHeaderText("Default Credentials");
         alert.setContentText(
                 "Admin Login:\nUsername: admin\nPassword: admin123\n\nUser Login:\nUsername: user\nPassword: user123");
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 
@@ -130,6 +131,12 @@ public class LoginController implements Initializable {
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setTitle("IDS Monitor - Intrusion Detection System");
             stage.setScene(scene);
+
+            // Enable resizing and set minimum size
+            stage.setResizable(true);
+            stage.setMinWidth(1000);
+            stage.setMinHeight(600);
+
             stage.centerOnScreen();
 
             System.out.println("User logged in: " + authService.getCurrentUser().getUsername());

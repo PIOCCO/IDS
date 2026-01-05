@@ -31,7 +31,7 @@ public class AlertDAO {
                 "ADD COLUMN IF NOT EXISTS direction VARCHAR(20) DEFAULT 'UNKNOWN'";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement checkStmt = conn.prepareStatement(checkColumnSQL)) {
+                PreparedStatement checkStmt = conn.prepareStatement(checkColumnSQL)) {
 
             checkStmt.setString(1, schema);
             ResultSet rs = checkStmt.executeQuery();
@@ -53,8 +53,8 @@ public class AlertDAO {
         String sql = "SELECT * FROM " + schema + ".alerts ORDER BY created_at DESC";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 alerts.add(extractAlertFromResultSet(rs));
@@ -72,7 +72,7 @@ public class AlertDAO {
         String sql = "SELECT * FROM " + schema + ".alerts WHERE severity = ? ORDER BY created_at DESC";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, severity);
             ResultSet rs = pstmt.executeQuery();
@@ -93,7 +93,7 @@ public class AlertDAO {
         String sql = "SELECT * FROM " + schema + ".alerts WHERE direction = ? ORDER BY created_at DESC";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, direction);
             ResultSet rs = pstmt.executeQuery();
@@ -118,7 +118,7 @@ public class AlertDAO {
         String sql = "SELECT * FROM " + schema + ".alerts ORDER BY created_at DESC LIMIT ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, limit);
             ResultSet rs = pstmt.executeQuery();
@@ -140,7 +140,7 @@ public class AlertDAO {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, alert.getSeverity());
             pstmt.setString(2, alert.getType());
@@ -163,7 +163,7 @@ public class AlertDAO {
         String sql = "UPDATE " + schema + ".alerts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE alert_id = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, newStatus);
             pstmt.setInt(2, Integer.parseInt(alertId.replace("ALT-", "")));
@@ -180,7 +180,7 @@ public class AlertDAO {
         String sql = "DELETE FROM " + schema + ".alerts WHERE alert_id = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, Integer.parseInt(alertId.replace("ALT-", "")));
             return pstmt.executeUpdate() > 0;
@@ -191,11 +191,27 @@ public class AlertDAO {
         }
     }
 
+    public boolean deleteAllAlerts() {
+        String sql = "DELETE FROM " + schema + ".alerts";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.executeUpdate();
+            System.out.println("All alerts deleted from database");
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error deleting all alerts: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int getAlertCountBySeverity(String severity) {
         String sql = "SELECT COUNT(*) FROM " + schema + ".alerts WHERE severity = ? AND status = 'Active'";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, severity);
             ResultSet rs = pstmt.executeQuery();
@@ -215,8 +231,8 @@ public class AlertDAO {
         String sql = "SELECT COUNT(*) FROM " + schema + ".alerts WHERE direction = 'INBOUND' AND status = 'Active'";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             if (rs.next()) {
                 return rs.getInt(1);
@@ -233,8 +249,8 @@ public class AlertDAO {
         String sql = "SELECT COUNT(*) FROM " + schema + ".alerts";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             if (rs.next()) {
                 return rs.getInt(1);
@@ -253,8 +269,8 @@ public class AlertDAO {
                 "WHERE status = 'Active' GROUP BY direction";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 stats.put(rs.getString("direction"), rs.getInt("count"));

@@ -58,14 +58,17 @@ public class DashboardController implements Initializable {
     }
 
     private void initializeTable() {
-        severityColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSeverity()));
-        typeColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getType()));
-        sourceColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSourceIP()));
-        timestampColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTimestamp().toString()));
+        // Make columns fill entire table width
+        recentAlertsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        severityColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSeverity()));
+        typeColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getType()));
+        sourceColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSourceIP()));
+        timestampColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getTimestamp().toString()));
     }
 
     private void loadStatistics() {

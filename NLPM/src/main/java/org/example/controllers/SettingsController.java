@@ -1,6 +1,5 @@
 package org.example.controllers;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -45,8 +44,7 @@ public class SettingsController implements Initializable {
 
     private void initializeControls() {
         logLevelCombo.setItems(javafx.collections.FXCollections.observableArrayList(
-                "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
-        ));
+                "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"));
         logLevelCombo.setValue("INFO");
     }
 
@@ -63,6 +61,7 @@ public class SettingsController implements Initializable {
         alert.setTitle("Settings Saved");
         alert.setHeaderText(null);
         alert.setContentText("Your settings have been saved successfully!");
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 

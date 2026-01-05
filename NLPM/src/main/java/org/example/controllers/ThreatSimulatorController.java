@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
 import org.example.services.ThreatSimulatorService;
 import org.example.services.DetectionEngine;
 
@@ -63,11 +62,10 @@ public class ThreatSimulatorController implements Initializable {
         synFloodBtn.setOnAction(e -> simulateSynFlood());
         testConnectionBtn.setOnAction(e -> testConnection());
 
-        stopSimulatorBtn.setDisable(true);
-
         // Display dangerous ports
         displayDangerousPorts();
 
+        // Sync UI with service state (handles returning to this page)
         updateStatus();
     }
 
@@ -190,8 +188,7 @@ public class ThreatSimulatorController implements Initializable {
 
             new Thread(() -> {
                 ThreatSimulatorService.testConnection(targetIP, port);
-                javafx.application.Platform.runLater(() ->
-                        logArea.appendText("✅ Connection test completed\n\n"));
+                javafx.application.Platform.runLater(() -> logArea.appendText("✅ Connection test completed\n\n"));
             }).start();
 
         } catch (NumberFormatException e) {
@@ -199,13 +196,23 @@ public class ThreatSimulatorController implements Initializable {
         }
     }
 
+    /**
+     * Synchronize UI state with ThreatSimulatorService
+     * This handles the case when user navigates away and returns
+     */
     private void updateStatus() {
-        if (simulator.isRunning()) {
+        boolean isCurrentlyRunning = simulator.isRunning();
+
+        if (isCurrentlyRunning) {
             statusLabel.setText("🟢 ACTIVE - " + simulator.getActiveListenerCount() + " listeners");
             statusLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
+            startSimulatorBtn.setDisable(true);
+            stopSimulatorBtn.setDisable(false);
         } else {
             statusLabel.setText("🔴 STOPPED");
             statusLabel.setStyle("-fx-text-fill: #F44336; -fx-font-weight: bold;");
+            startSimulatorBtn.setDisable(false);
+            stopSimulatorBtn.setDisable(true);
         }
     }
 
@@ -214,6 +221,7 @@ public class ThreatSimulatorController implements Initializable {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 
@@ -222,6 +230,7 @@ public class ThreatSimulatorController implements Initializable {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 
@@ -230,6 +239,7 @@ public class ThreatSimulatorController implements Initializable {
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 }

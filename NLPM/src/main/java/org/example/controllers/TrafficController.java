@@ -112,6 +112,9 @@ public class TrafficController implements Initializable {
 
     private void initializeTable() {
         try {
+            // Make columns fill entire table width
+            trafficTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
             protocolColumn.setCellValueFactory(
                     cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getProtocol()));
             sourceIPColumn.setCellValueFactory(
@@ -179,10 +182,53 @@ public class TrafficController implements Initializable {
             if (activeConnectionsLabel != null)
                 activeConnectionsLabel.setText("0");
 
+            // IMPORTANT: Sync UI state with PacketCaptureService
+            // This handles the case when user navigates away and returns
+            syncUIWithCaptureState();
+
             System.out.println("Controls initialized successfully");
         } catch (Exception e) {
             System.err.println("Error initializing controls: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Synchronize UI buttons with the actual state of PacketCaptureService
+     * This is crucial when navigating back to this page while capture is running
+     */
+    private void syncUIWithCaptureState() {
+        boolean isCurrentlyCapturing = captureService.isCapturing();
+
+        if (isCurrentlyCapturing) {
+            // Capture is running in background - update UI to reflect this
+            System.out.println("Sync: Capture is already running - updating UI state");
+
+            if (statusLabel != null) {
+                statusLabel.setText("Status: Monitoring Active");
+                statusLabel.setStyle("-fx-text-fill: #4caf50; -fx-font-weight: bold;");
+            }
+            if (startMonitorBtn != null)
+                startMonitorBtn.setDisable(true);
+            if (stopMonitorBtn != null)
+                stopMonitorBtn.setDisable(false);
+            if (interfaceSelector != null)
+                interfaceSelector.setDisable(true);
+
+            // Restart auto-refresh since this is a new controller instance
+            startAutoRefresh();
+        } else {
+            // Capture is not running - ensure UI is in default state
+            if (statusLabel != null) {
+                statusLabel.setText("Status: Stopped");
+                statusLabel.setStyle("-fx-text-fill: #f44336; -fx-font-weight: bold;");
+            }
+            if (startMonitorBtn != null)
+                startMonitorBtn.setDisable(false);
+            if (stopMonitorBtn != null)
+                stopMonitorBtn.setDisable(true);
+            if (interfaceSelector != null)
+                interfaceSelector.setDisable(false);
         }
     }
 
@@ -251,20 +297,32 @@ public class TrafficController implements Initializable {
 
     private void startMonitoring() {
         try {
+            // Check 1: Interface selector exists
             if (interfaceSelector == null || interfaceSelector.getValue() == null) {
-                showError("Please select a network interface");
+                showError("Erreur: Veuillez sélectionner une interface réseau");
                 return;
             }
 
             String selectedInterface = interfaceSelector.getValue();
+
+            // Check 2: Interface is selected
             if (selectedInterface.isEmpty()) {
-                showError("Please select a network interface");
+                showError("Erreur: Aucune interface réseau sélectionnée");
+                return;
+            }
+
+            // Check 3: Capture already running?
+            if (captureService.isCapturing()) {
+                showError("Erreur: La capture est déjà en cours. Utilisez le bouton Stop pour arrêter.");
+                // Sync UI since it might be out of sync
+                syncUIWithCaptureState();
                 return;
             }
 
             // Extract interface name (before the " - " separator)
             String interfaceName = selectedInterface.split(" - ")[0];
 
+            // Check 4: Try to start capture
             boolean started = captureService.startCapture(interfaceName);
 
             if (started) {
@@ -288,13 +346,15 @@ public class TrafficController implements Initializable {
                 showSuccess("Network monitoring started successfully");
                 System.out.println("Network monitoring started on: " + interfaceName);
             } else {
-                showError("Failed to start packet capture. Make sure you have administrator privileges.");
-
+                // Check 5: Capture failed - distinct error message
+                showError(
+                        "Erreur: Échec du démarrage de la capture. Vérifiez les privilèges administrateur ou l'interface sélectionnée.");
             }
         } catch (Exception e) {
             System.err.println("Error starting monitoring: " + e.getMessage());
             e.printStackTrace();
-            showError("Failed to start monitoring: " + e.getMessage());
+            // Check 6: Exception during start
+            showError("Erreur système: " + e.getMessage());
         }
     }
 
@@ -338,6 +398,7 @@ public class TrafficController implements Initializable {
             confirmAlert.setTitle("Clear Traffic Data");
             confirmAlert.setHeaderText("Are you sure you want to clear traffic data?");
             confirmAlert.setContentText("This action cannot be undone. Choose an option:");
+            org.example.utils.DialogUtils.styleAlert(confirmAlert);
 
             ButtonType clearAllBtn = new ButtonType("Clear All Traffic");
             ButtonType clearVisibleBtn = new ButtonType("Clear Visible Only");
@@ -499,7 +560,9 @@ public class TrafficController implements Initializable {
                 public void run() {
                     Platform.runLater(() -> {
                         try {
-                            loadTrafficData();
+                            // Use applyProtocolFilter() instead of loadTrafficData()
+                            // to respect the currently selected protocol filter
+                            applyProtocolFilter();
                             updateStatistics();
                         } catch (Exception e) {
                             System.err.println("Error in auto-refresh: " + e.getMessage());
@@ -572,6 +635,7 @@ public class TrafficController implements Initializable {
             alert.setTitle("Error");
             alert.setHeaderText(null);
             alert.setContentText(message);
+            org.example.utils.DialogUtils.styleAlert(alert);
             alert.showAndWait();
         } catch (Exception e) {
             System.err.println("Error showing error dialog: " + e.getMessage());
@@ -584,6 +648,7 @@ public class TrafficController implements Initializable {
             alert.setTitle("Success");
             alert.setHeaderText(null);
             alert.setContentText(message);
+            org.example.utils.DialogUtils.styleAlert(alert);
             alert.showAndWait();
         } catch (Exception e) {
             System.err.println("Error showing success dialog: " + e.getMessage());
@@ -596,6 +661,7 @@ public class TrafficController implements Initializable {
             alert.setTitle("Information");
             alert.setHeaderText(null);
             alert.setContentText(message);
+            org.example.utils.DialogUtils.styleAlert(alert);
             alert.showAndWait();
         } catch (Exception e) {
             System.err.println("Error showing info dialog: " + e.getMessage());
@@ -604,7 +670,8 @@ public class TrafficController implements Initializable {
 
     public void refreshTrafficData() {
         try {
-            loadTrafficData();
+            // Use applyProtocolFilter() to respect the selected filter
+            applyProtocolFilter();
             updateStatistics();
         } catch (Exception e) {
             System.err.println("Error refreshing traffic data: " + e.getMessage());

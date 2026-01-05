@@ -84,15 +84,17 @@ public class CreateUserController implements Initializable {
     }
 
     private void initializeTable() {
-        usernameColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUsername()));
-        roleColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRole()));
-        emailColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEmail()));
-        statusColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().isActive() ? "Active" : "Inactive"));
+        // Make columns fill entire table width (centered, no wasted space)
+        usersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        usernameColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUsername()));
+        roleColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRole()));
+        emailColumn.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEmail()));
+        statusColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().isActive() ? "Active" : "Inactive"));
     }
 
     private void loadUsers() {
@@ -199,6 +201,7 @@ public class CreateUserController implements Initializable {
         confirmAlert.setTitle("Delete User");
         confirmAlert.setHeaderText("Delete user: " + selectedUser.getUsername() + "?");
         confirmAlert.setContentText("This action cannot be undone.");
+        org.example.utils.DialogUtils.styleAlert(confirmAlert);
 
         var result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {

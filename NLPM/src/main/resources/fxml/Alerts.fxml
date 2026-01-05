@@ -46,8 +46,11 @@
 
         <Region HBox.hgrow="ALWAYS"/>
 
-        <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button primary-button"/>
-        <Button text="📥 Export" styleClass="action-button"/>
+        <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button" 
+                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button fx:id="exportBtn" text="📤 Export CSV" styleClass="action-button primary-button"/>
+        <Button fx:id="clearAlertsBtn" text="🗑️ Clear Alerts" styleClass="action-button danger-button"
+                style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
     </HBox>
 
     <!-- Alerts Table with Direction Column -->

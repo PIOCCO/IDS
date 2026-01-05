@@ -70,6 +70,7 @@ public class Main extends Application {
         alert.setTitle("Exit Application");
         alert.setHeaderText("Are you sure you want to exit?");
         alert.setContentText("All monitoring will stop and database connections will be terminated.");
+        org.example.utils.DialogUtils.styleAlert(alert);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -100,6 +101,7 @@ public class Main extends Application {
         alert.setHeaderText("Failed to connect to database");
         alert.setContentText("Please ensure PostgreSQL is running and configured correctly.\n\n" +
                 "Check database.properties file for connection details.");
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
         System.exit(1);
     }

@@ -98,7 +98,7 @@
             <Button fx:id="clearTrafficBtn"
                     text="🗑️ Clear Traffic"
                     styleClass="action-button danger-button"
-                    style="-fx-font-size: 12px; -fx-padding: 8 15;"/>
+                    style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
         </HBox>
 
         <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">

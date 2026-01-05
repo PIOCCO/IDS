@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.PersonalInfoController"
+      styleClass="content-view"
+      spacing="20">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+        <Label text="👤 Personal Information" styleClass="page-title"/>
+        <Label text="View and edit your account details" styleClass="page-subtitle"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" styleClass="settings-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="30">
+            <!-- User Info Section -->
+            <VBox styleClass="settings-section" spacing="20">
+                <Label text="Your Account" styleClass="section-title"/>
+
+                <!-- Message Label -->
+                <Label fx:id="messageLabel" text="" wrapText="true"/>
+
+                <!-- Username (Read-only) -->
+                <VBox spacing="8">
+                    <Label text="Username" styleClass="field-label"/>
+                    <TextField fx:id="usernameField"
+                               promptText="Your username"
+                               styleClass="settings-field"
+                               editable="false"
+                               style="-fx-background-color: #3a3a3a;"/>
+                    <Label text="Username cannot be changed"
+                           style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                </VBox>
+
+                <!-- Email -->
+                <VBox spacing="8">
+                    <Label text="Email Address" styleClass="field-label"/>
+                    <TextField fx:id="emailField"
+                               promptText="your.email@example.com"
+                               styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Role (Read-only) -->
+                <VBox spacing="8">
+                    <Label text="Role" styleClass="field-label"/>
+                    <TextField fx:id="roleField"
+                               promptText="Your role"
+                               styleClass="settings-field"
+                               editable="false"
+                               style="-fx-background-color: #3a3a3a;"/>
+                    <Label text="Role can only be changed by administrators"
+                           style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                </VBox>
+            </VBox>
+
+            <!-- Change Password Section -->
+            <VBox styleClass="settings-section" spacing="20">
+                <Label text="Change Password" styleClass="section-title"/>
+                <Label text="Leave blank to keep current password"
+                       style="-fx-text-fill: #b0b0b0; -fx-font-size: 12px;"/>
+
+                <!-- Current Password -->
+                <VBox spacing="8">
+                    <Label text="Current Password *" styleClass="field-label"/>
+                    <PasswordField fx:id="currentPasswordField"
+                                   promptText="Enter your current password"
+                                   styleClass="settings-field"/>
+                    <Label text="Required to save any changes"
+                           style="-fx-text-fill: #FF9800; -fx-font-size: 11px;"/>
+                </VBox>
+
+                <!-- New Password -->
+                <VBox spacing="8">
+                    <Label text="New Password" styleClass="field-label"/>
+                    <PasswordField fx:id="newPasswordField"
+                                   promptText="Enter new password (min 6 characters)"
+                                   styleClass="settings-field"/>
+                </VBox>
+
+                <!-- Confirm New Password -->
+                <VBox spacing="8">
+                    <Label text="Confirm New Password" styleClass="field-label"/>
+                    <PasswordField fx:id="confirmPasswordField"
+                                   promptText="Re-enter new password"
+                                   styleClass="settings-field"/>
+                </VBox>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Button fx:id="saveBtn"
+                        text="💾 Save Changes"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; 
+                               -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8; -fx-font-weight: bold;"/>
+                <Button fx:id="resetBtn"
+                        text="🔄 Reset Form"
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; 
+                               -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="deleteAccountBtn"
+                        text="🗑️ Delete My Account"
+                        style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 14px; 
+                               -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <!-- Account Info Footer -->
+            <VBox styleClass="settings-section" spacing="10" style="-fx-background-color: #2a2a2a; -fx-padding: 15; -fx-background-radius: 8;">
+                <Label text="Account Statistics" style="-fx-text-fill: #4CAF50; -fx-font-weight: bold;"/>
+                <HBox spacing="30">
+                    <VBox spacing="3">
+                        <Label text="Account Status" style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                        <Label fx:id="statusLabel" text="● Active" style="-fx-text-fill: #4CAF50; -fx-font-size: 13px;"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Created" style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                        <Label fx:id="createdLabel" text="Unknown" style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Last Login" style="-fx-text-fill: #808080; -fx-font-size: 11px;"/>
+                        <Label fx:id="lastLoginLabel" text="Now" style="-fx-text-fill: #b0b0b0; -fx-font-size: 13px;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

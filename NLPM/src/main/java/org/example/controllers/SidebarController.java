@@ -60,6 +60,9 @@ public class SidebarController implements Initializable {
     @FXML
     private VBox adminSection;
 
+    @FXML
+    private Button personalInfoBtn;
+
     private MainController mainController;
     private Button selectedButton;
     private AuthenticationService authService;
@@ -81,12 +84,18 @@ public class SidebarController implements Initializable {
 
         // NEW: Threat Simulator button
         if (threatSimulatorBtn != null) {
-            threatSimulatorBtn.setOnAction(e -> switchView(threatSimulatorBtn, () -> mainController.showThreatSimulator()));
+            threatSimulatorBtn
+                    .setOnAction(e -> switchView(threatSimulatorBtn, () -> mainController.showThreatSimulator()));
         }
 
         // Only initialize createUserBtn if user is admin
         if (createUserBtn != null && !createUserBtn.isDisabled()) {
             createUserBtn.setOnAction(e -> switchView(createUserBtn, () -> mainController.showCreateUser()));
+        }
+
+        // NEW: Personal Info button - navigates to Personal Info page
+        if (personalInfoBtn != null) {
+            personalInfoBtn.setOnAction(e -> mainController.showPersonalInfo());
         }
 
         // Display current user information
@@ -112,8 +121,10 @@ public class SidebarController implements Initializable {
                 adminSection.setVisible(true);
                 adminSection.setManaged(true);
 
-                if (settingsBtn != null) settingsBtn.setDisable(false);
-                if (rulesBtn != null) rulesBtn.setDisable(false);
+                if (settingsBtn != null)
+                    settingsBtn.setDisable(false);
+                if (rulesBtn != null)
+                    rulesBtn.setDisable(false);
                 break;
 
             case "USER":
@@ -121,8 +132,10 @@ public class SidebarController implements Initializable {
                 adminSection.setVisible(false);
                 adminSection.setManaged(false);
 
-                if (settingsBtn != null) settingsBtn.setDisable(false);
-                if (rulesBtn != null) rulesBtn.setDisable(true);
+                if (settingsBtn != null)
+                    settingsBtn.setDisable(false);
+                if (rulesBtn != null)
+                    rulesBtn.setDisable(true);
                 break;
 
             case "VIEWER":
@@ -130,8 +143,10 @@ public class SidebarController implements Initializable {
                 adminSection.setVisible(false);
                 adminSection.setManaged(false);
 
-                if (settingsBtn != null) settingsBtn.setDisable(true);
-                if (rulesBtn != null) rulesBtn.setDisable(true);
+                if (settingsBtn != null)
+                    settingsBtn.setDisable(true);
+                if (rulesBtn != null)
+                    rulesBtn.setDisable(true);
                 break;
 
             default:
@@ -139,12 +154,13 @@ public class SidebarController implements Initializable {
                 adminSection.setVisible(false);
                 adminSection.setManaged(false);
 
-                if (settingsBtn != null) settingsBtn.setDisable(true);
-                if (rulesBtn != null) rulesBtn.setDisable(true);
+                if (settingsBtn != null)
+                    settingsBtn.setDisable(true);
+                if (rulesBtn != null)
+                    rulesBtn.setDisable(true);
                 break;
         }
     }
-
 
     /**
      * Update user display with current user information
@@ -239,11 +255,10 @@ public class SidebarController implements Initializable {
 
     @FXML
     private void handleLogout() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Logout Confirmation");
-        alert.setHeaderText("Are you sure you want to logout?");
-        alert.setContentText("You will need to login again to access the system.\n\n" +
-                "Any active monitoring will be stopped.");
+        Alert alert = org.example.utils.DialogUtils.createConfirmation(
+                "Logout Confirmation",
+                "🚪 Are you sure you want to logout?",
+                "You will need to login again to access the system.\n\nAny active monitoring will be stopped.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -287,6 +302,7 @@ public class SidebarController implements Initializable {
         alert.setTitle("Error");
         alert.setHeaderText("An error occurred");
         alert.setContentText(message);
+        org.example.utils.DialogUtils.styleAlert(alert);
         alert.showAndWait();
     }
 

@@ -7,9 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.ScrollPane;
-import org.example.models.Account;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -43,7 +41,7 @@ public class MainController implements Initializable {
 
     private void loadSidebar() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Sidebar.fxml"));
-        VBox sidebar = loader.load();
+        javafx.scene.control.ScrollPane sidebar = loader.load(); // ScrollPane is now the root
         sidebarController = loader.getController();
         sidebarController.setMainController(this);
         mainContainer.setLeft(sidebar);
@@ -128,39 +126,14 @@ public class MainController implements Initializable {
     }
 
     /**
-     * Called when an account is selected in the account list
+     * NEW: Show Personal Info view
      */
-    public void onAccountSelected(Account account) {
-        if (account == null) {
-            System.err.println("Warning: Null account selected");
-            return;
-        }
-
-        System.out.println("Account selected: " + account.getName() + " (" + account.getEmail() + ")");
-
-        if (dashboardController != null) {
-            // dashboardController.updateForAccount(account);
-        }
-
-        if (alertsController != null) {
-            // alertsController.filterByAccount(account);
-        }
-
-        if (trafficController != null) {
-            // trafficController.filterByAccount(account);
-        }
-    }
-
-    /**
-     * Optional: Show account-specific details view
-     */
-    private void showAccountDetails(Account account) {
+    public void showPersonalInfo() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AccountDetails.fxml"));
-            VBox accountDetails = loader.load();
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PersonalInfo.fxml"));
+            VBox personalInfo = loader.load();
             contentContainer.getChildren().clear();
-            contentContainer.getChildren().add(accountDetails);
+            contentContainer.getChildren().add(personalInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }

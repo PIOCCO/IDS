@@ -22,13 +22,15 @@ public class DatabaseManager {
     }
 
     public static DatabaseManager getInstance() {
-//        if (instance == null) { //lazy initialization: The object is created only when needed
-//            synchronized (DatabaseManager.class) { //Only one thread at a time can enter this block
-//                if (instance == null) {
-//                    instance = new DatabaseManager();
-//                }
-//            }
-//        }
+        // if (instance == null) { //lazy initialization: The object is created only
+        // when needed
+        // synchronized (DatabaseManager.class) { //Only one thread at a time can enter
+        // this block
+        // if (instance == null) {
+        // instance = new DatabaseManager();
+        // }
+        // }
+        // }
         return instance;
     }
 
@@ -119,23 +121,6 @@ public class DatabaseManager {
                         "status VARCHAR(20), " +
                         "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
 
-                // System stats table
-                "CREATE TABLE IF NOT EXISTS " + schema + ".system_stats (" +
-                        "stat_id SERIAL PRIMARY KEY, " +
-                        "cpu_usage DECIMAL(5,2), " +
-                        "memory_usage DECIMAL(5,2), " +
-                        "packets_analyzed BIGINT, " +
-                        "threats_blocked INTEGER, " +
-                        "recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-
-                // Accounts table (for the account management feature)
-                "CREATE TABLE IF NOT EXISTS " + schema + ".accounts (" +
-                        "account_id SERIAL PRIMARY KEY, " +
-                        "name VARCHAR(100) NOT NULL, " +
-                        "email VARCHAR(100) NOT NULL, " +
-                        "color VARCHAR(20), " +
-                        "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-
                 // Create indexes
                 "CREATE INDEX IF NOT EXISTS idx_alerts_severity ON " + schema + ".alerts(severity)",
                 "CREATE INDEX IF NOT EXISTS idx_alerts_status ON " + schema + ".alerts(status)",
@@ -145,7 +130,8 @@ public class DatabaseManager {
 
                 // Insert default admin user if not exists
                 "INSERT INTO " + schema + ".users (username, password_hash, role, email) " +
-                        "SELECT 'admin', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'ADMIN', 'admin@idsmonitor.local' " +
+                        "SELECT 'admin', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'ADMIN', 'admin@idsmonitor.local' "
+                        +
                         "WHERE NOT EXISTS (SELECT 1 FROM " + schema + ".users WHERE username = 'admin')"
         };
 
