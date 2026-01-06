@@ -1,6 +1,6 @@
-package org.example.database.dao;
+package org.example.dao;
 
-import org.example.database.DatabaseManager;
+import org.example.utils.DatabaseManager;
 import org.example.models.SecurityAlert;
 
 import java.sql.*;

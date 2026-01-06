@@ -1,7 +1,6 @@
-package org.example.database.dao.impl;
+package org.example.dao.impl;
 
-import org.example.database.DatabaseManager;
-import org.example.database.dao.interfaces.UserDAO;
+import org.example.utils.DatabaseManager;
 import org.example.exception.DAOException;
 import org.example.models.User;
 
@@ -11,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of UserDAO interface.
- * Handles all database operations for User entity.
+ * DAO for User entity.
+ * Handles all database operations for users.
  */
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl {
 
     private final DatabaseManager dbManager;
     private final String schema;
@@ -66,8 +65,6 @@ public class UserDAOImpl implements UserDAO {
     // ========================================
     // BaseDAO IMPLEMENTATION
     // ========================================
-
-    @Override
     public User save(User user) {
         String sql = String.format(INSERT_SQL, schema);
 
@@ -97,8 +94,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error saving user: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public User update(User user) {
         String sql = String.format(UPDATE_SQL, schema);
 
@@ -118,8 +113,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error updating user: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public boolean delete(Integer id) {
         String sql = String.format(DELETE_SQL, schema);
 
@@ -150,8 +143,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error deleting user: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public Optional<User> findById(Integer id) {
         String sql = String.format(SELECT_BY_ID_SQL, schema);
 
@@ -172,8 +163,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error finding user by ID: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         String sql = String.format(SELECT_ALL_SQL, schema);
@@ -192,8 +181,6 @@ public class UserDAOImpl implements UserDAO {
 
         return users;
     }
-
-    @Override
     public long count() {
         String sql = String.format(COUNT_SQL, schema);
 
@@ -215,8 +202,6 @@ public class UserDAOImpl implements UserDAO {
     // ========================================
     // UserDAO SPECIFIC METHODS
     // ========================================
-
-    @Override
     public Optional<User> findByUsername(String username) {
         String sql = String.format(SELECT_BY_USERNAME_SQL, schema);
 
@@ -237,8 +222,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error finding user by username: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         String sql = String.format(SELECT_BY_EMAIL_SQL, schema);
 
@@ -259,8 +242,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error finding user by email: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public List<User> findByRole(String role) {
         List<User> users = new ArrayList<>();
         String sql = String.format(SELECT_BY_ROLE_SQL, schema);
@@ -282,8 +263,6 @@ public class UserDAOImpl implements UserDAO {
 
         return users;
     }
-
-    @Override
     public List<User> findActiveUsers() {
         List<User> users = new ArrayList<>();
         String sql = String.format(SELECT_ACTIVE_SQL, schema);
@@ -302,8 +281,6 @@ public class UserDAOImpl implements UserDAO {
 
         return users;
     }
-
-    @Override
     public boolean existsByUsername(String username) {
         String sql = String.format(EXISTS_BY_USERNAME_SQL, schema);
 
@@ -324,8 +301,6 @@ public class UserDAOImpl implements UserDAO {
 
         return false;
     }
-
-    @Override
     public boolean existsByEmail(String email) {
         String sql = String.format(EXISTS_BY_EMAIL_SQL, schema);
 
@@ -346,8 +321,6 @@ public class UserDAOImpl implements UserDAO {
 
         return false;
     }
-
-    @Override
     public boolean updateStatus(String username, boolean isActive) {
         String sql = String.format(UPDATE_STATUS_SQL, schema);
 
@@ -363,8 +336,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error updating user status: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public boolean updateEmail(String username, String email) {
         String sql = String.format(UPDATE_EMAIL_SQL, schema);
 
@@ -383,8 +354,6 @@ public class UserDAOImpl implements UserDAO {
             throw new DAOException("Error updating user email: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public boolean updateLastLogin(String username) {
         String sql = String.format(UPDATE_LAST_LOGIN_SQL, schema);
 

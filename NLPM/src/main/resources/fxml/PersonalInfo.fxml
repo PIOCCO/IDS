@@ -103,12 +103,12 @@
                                -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8; -fx-font-weight: bold;"/>
                 <Button fx:id="resetBtn"
                         text="🔄 Reset Form"
-                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; 
+                        style="-fx-background-color: #D4A017; -fx-text-fill: white; -fx-font-size: 14px; 
                                -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="deleteAccountBtn"
                         text="🗑️ Delete My Account"
-                        style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 14px; 
+                        style="-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 14px; 
                                -fx-padding: 12 25; -fx-cursor: hand; -fx-background-radius: 8; -fx-font-weight: bold;"/>
             </HBox>
 

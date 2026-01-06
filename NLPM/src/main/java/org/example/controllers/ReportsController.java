@@ -11,7 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import org.example.database.dao.MonitoringSessionDAO;
+import org.example.dao.MonitoringSessionDAO;
 import org.example.models.MonitoringSession;
 import org.example.utils.DialogUtils;
 

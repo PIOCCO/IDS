@@ -21,9 +21,9 @@
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="inboundThreatsLabel"
                text="⚠️ Inbound Threats: 0"
-               style="-fx-text-fill: #F44336; -fx-font-size: 14px; -fx-font-weight: bold;
+               style="-fx-text-fill: #8B0000; -fx-font-size: 14px; -fx-font-weight: bold;
                       -fx-background-color: rgba(244, 67, 54, 0.1); -fx-padding: 8 15;
-                      -fx-background-radius: 6; -fx-border-color: #F44336; -fx-border-radius: 6; -fx-border-width: 1;"/>
+                      -fx-background-radius: 6; -fx-border-color: #8B0000; -fx-border-radius: 6; -fx-border-width: 1;"/>
     </HBox>
 
     <!-- Enhanced Filters and Actions -->
@@ -47,10 +47,10 @@
         <Region HBox.hgrow="ALWAYS"/>
 
         <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button" 
-                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                style="-fx-background-color: #D4A017; -fx-text-fill: white;"/>
         <Button fx:id="exportBtn" text="📤 Export CSV" styleClass="action-button primary-button"/>
         <Button fx:id="clearAlertsBtn" text="🗑️ Clear Alerts" styleClass="action-button danger-button"
-                style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+                style="-fx-background-color: #8B0000; -fx-text-fill: white;"/>
     </HBox>
 
     <!-- Alerts Table with Direction Column -->
@@ -79,11 +79,11 @@
     <!-- Info Box -->
     <HBox spacing="10" alignment="CENTER_LEFT"
           style="-fx-background-color: rgba(33, 150, 243, 0.1); -fx-padding: 15;
-                 -fx-background-radius: 8; -fx-border-color: #2196F3; -fx-border-radius: 8; -fx-border-width: 1;">
+                 -fx-background-radius: 8; -fx-border-color: #D4A017; -fx-border-radius: 8; -fx-border-width: 1;">
         <Label text="ℹ️" style="-fx-font-size: 16px;"/>
         <VBox spacing="5">
             <Label text="Alert Direction Guide:"
-                   style="-fx-text-fill: #2196F3; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                   style="-fx-text-fill: #D4A017; -fx-font-size: 13px; -fx-font-weight: bold;"/>
             <Label text="⬇️ INBOUND: External traffic coming to your network (potential threats)"
                    style="-fx-text-fill: #ffffff; -fx-font-size: 12px;"/>
             <Label text="⬆️ OUTBOUND: Traffic from your network to external systems (usually safe)"

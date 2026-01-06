@@ -90,7 +90,7 @@
             <Button fx:id="reloadBtn"
                     text="🔄 Reload"
                     styleClass="action-button"
-                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #D4A017; -fx-text-fill: white;"/>
             <Button fx:id="exportBtn"
                     text="📤 Export CSV"
                     styleClass="action-button primary-button"
@@ -98,7 +98,7 @@
             <Button fx:id="clearTrafficBtn"
                     text="🗑️ Clear Traffic"
                     styleClass="action-button danger-button"
-                    style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+                    style="-fx-background-color: #8B0000; -fx-text-fill: white;"/>
         </HBox>
 
         <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">

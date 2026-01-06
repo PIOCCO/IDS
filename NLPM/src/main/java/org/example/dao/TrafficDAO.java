@@ -1,6 +1,6 @@
-package org.example.database.dao;
+package org.example.dao;
 
-import org.example.database.DatabaseManager;
+import org.example.utils.DatabaseManager;
 import org.example.models.TrafficData;
 
 import java.sql.*;
@@ -21,8 +21,8 @@ public class TrafficDAO {
         String sql = "SELECT * FROM " + schema + ".traffic_logs ORDER BY timestamp DESC LIMIT 1000";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 trafficList.add(extractTrafficFromResultSet(rs));
@@ -40,7 +40,7 @@ public class TrafficDAO {
         String sql = "SELECT * FROM " + schema + ".traffic_logs WHERE protocol = ? ORDER BY timestamp DESC LIMIT 500";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, protocol);
             ResultSet rs = pstmt.executeQuery();
@@ -65,8 +65,8 @@ public class TrafficDAO {
                 "ORDER BY timestamp DESC";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 trafficList.add(extractTrafficFromResultSet(rs));
@@ -81,11 +81,12 @@ public class TrafficDAO {
 
     public boolean insertTraffic(TrafficData traffic) {
         String sql = "INSERT INTO " + schema + ".traffic_logs " +
-                "(protocol, source_ip, source_port, destination_ip, destination_port, packet_size, status, timestamp) " +
+                "(protocol, source_ip, source_port, destination_ip, destination_port, packet_size, status, timestamp) "
+                +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, traffic.getProtocol());
             pstmt.setString(2, traffic.getSourceIP());
@@ -126,7 +127,7 @@ public class TrafficDAO {
         String sql = "DELETE FROM " + schema + ".traffic_logs";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             int rowsDeleted = stmt.executeUpdate(sql);
             System.out.println("Deleted " + rowsDeleted + " traffic records from database");
@@ -149,7 +150,7 @@ public class TrafficDAO {
                 "WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '" + days + " days'";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             int rowsDeleted = stmt.executeUpdate(sql);
             System.out.println("Deleted " + rowsDeleted + " old traffic records (older than " + days + " days)");
@@ -171,7 +172,7 @@ public class TrafficDAO {
         String sql = "DELETE FROM " + schema + ".traffic_logs WHERE protocol = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, protocol);
             int rowsDeleted = pstmt.executeUpdate();
@@ -195,7 +196,7 @@ public class TrafficDAO {
                 "WHERE source_ip = ? OR destination_ip = ?";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, ipAddress);
             pstmt.setString(2, ipAddress);
@@ -213,8 +214,8 @@ public class TrafficDAO {
         String sql = "SELECT COUNT(*) FROM " + schema + ".traffic_logs";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             if (rs.next()) {
                 return rs.getLong(1);
@@ -232,8 +233,8 @@ public class TrafficDAO {
                 "WHERE timestamp > CURRENT_TIMESTAMP - INTERVAL '5 minutes'";
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             if (rs.next()) {
                 return rs.getInt(1);
@@ -255,7 +256,7 @@ public class TrafficDAO {
         java.util.Map<String, Object> stats = new java.util.HashMap<>();
 
         try (Connection conn = dbManager.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             // Total packets
             try (ResultSet rs = stmt.executeQuery(

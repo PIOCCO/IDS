@@ -49,7 +49,7 @@
         <!-- User Account Buttons -->
         <Button fx:id="personalInfoBtn"
                 text="👤 Personal Info"
-                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 13px;
+                style="-fx-background-color: #D4A017; -fx-text-fill: white; -fx-font-size: 13px;
                        -fx-padding: 6 12; -fx-cursor: hand; -fx-background-radius: 5;">
             <VBox.margin>
                 <Insets top="8"/>
@@ -58,7 +58,7 @@
         <Button fx:id="logoutBtn"
                 text="🚪 Logout"
                 onAction="#handleLogout"
-                style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-size: 13px;
+                style="-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-size: 13px;
                        -fx-padding: 6 12; -fx-cursor: hand; -fx-background-radius: 5;">
             <VBox.margin>
                 <Insets top="2"/>

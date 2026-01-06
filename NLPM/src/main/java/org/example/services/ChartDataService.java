@@ -1,6 +1,6 @@
 package org.example.services;
 
-import org.example.database.DatabaseManager;
+import org.example.utils.DatabaseManager;
 import org.example.models.ChartMetric;
 
 import java.sql.*;

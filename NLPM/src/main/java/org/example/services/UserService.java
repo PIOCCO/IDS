@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.database.dao.DAOFactory;
-import org.example.database.dao.interfaces.UserDAO;
+import org.example.dao.DAOFactory;
+import org.example.dao.impl.UserDAOImpl;
 import org.example.exception.DataNotFoundException;
 import org.example.exception.DuplicateDataException;
 import org.example.models.User;
@@ -16,10 +16,10 @@ import java.util.Optional;
 public class UserService {
 
     private static UserService instance;
-    private final UserDAO userDAO;
+    private final UserDAOImpl userDAO;
 
     private UserService() {
-        this.userDAO = (UserDAO) DAOFactory.getInstance().getUserDAO();
+        this.userDAO = DAOFactory.getInstance().getUserDAO();
     }
 
     public static synchronized UserService getInstance() {
@@ -85,7 +85,7 @@ public class UserService {
 
     public boolean deleteUser(String username) {
         // Use the impl's deleteByUsername method via casting
-        return ((org.example.database.dao.impl.UserDAOImpl) userDAO).deleteByUsername(username);
+        return ((org.example.dao.impl.UserDAOImpl) userDAO).deleteByUsername(username);
     }
 
     // ========== Business Logic ==========

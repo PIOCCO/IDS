@@ -2,7 +2,7 @@ package org.example.services;
 
 import org.example.models.SecurityAlert;
 import org.example.models.TrafficData;
-import org.example.database.dao.AlertDAO;
+import org.example.dao.AlertDAO;
 import org.pcap4j.packet.*;
 
 import java.net.InetAddress;
@@ -49,14 +49,14 @@ public class DetectionEngine {
 
     // Suspicious ports to monitor
     private static final Set<Integer> SUSPICIOUS_PORTS = Set.of(
-            22,    // SSH
-            23,    // Telnet
-            445,   // SMB
-            3389,  // RDP
-            5900,  // VNC
-            1433,  // MS SQL
-            3306,  // MySQL
-            5432,  // PostgreSQL
+            22, // SSH
+            23, // Telnet
+            445, // SMB
+            3389, // RDP
+            5900, // VNC
+            1433, // MS SQL
+            3306, // MySQL
+            5432, // PostgreSQL
             1337, 31337, // Common trojan ports
             6667, 6668, 6669, // IRC (botnets)
             12345, 12346, 20034, // Backdoors
@@ -65,11 +65,11 @@ public class DetectionEngine {
 
     // Normal ports to ignore (unless there's flooding)
     private static final Set<Integer> NORMAL_PORTS = Set.of(
-            80,    // HTTP
-            443,   // HTTPS
-            53,    // DNS
+            80, // HTTP
+            443, // HTTPS
+            53, // DNS
             67, 68, // DHCP
-            123    // NTP
+            123 // NTP
     );
 
     // Tracking maps with enhanced data
@@ -248,7 +248,8 @@ public class DetectionEngine {
      */
     private void detectHighPacketRate(String remoteIP, TrafficData traffic, String direction) {
         List<Long> timestamps = packetRateTracker.get(remoteIP);
-        if (timestamps == null) return;
+        if (timestamps == null)
+            return;
 
         // Calculate packets per second
         int packetsPerSecond = timestamps.size();
@@ -262,8 +263,7 @@ public class DetectionEngine {
                         traffic.getDestinationIP(),
                         String.format("High packet rate detected: %d packets/sec from %s (%s traffic)",
                                 packetsPerSecond, remoteIP, direction),
-                        direction
-                );
+                        direction);
             }
         }
     }
@@ -293,8 +293,7 @@ public class DetectionEngine {
                         traffic.getDestinationIP(),
                         String.format("Port scan detected: %d unique ports accessed by %s (%s traffic)",
                                 portsAccessed.size(), remoteIP, direction),
-                        direction
-                );
+                        direction);
                 portsAccessed.clear();
             }
         }
@@ -322,8 +321,7 @@ public class DetectionEngine {
                         traffic.getDestinationIP(),
                         String.format("Access to suspicious port %d (%s) from %s (%s traffic)",
                                 dstPort, portDescription, remoteIP, direction),
-                        direction
-                );
+                        direction);
             }
         }
     }
@@ -333,7 +331,8 @@ public class DetectionEngine {
      */
     private void analyzeTCPPacket(Packet packet, TrafficData traffic, String remoteIP, String direction) {
         TcpPacket tcpPacket = packet.get(TcpPacket.class);
-        if (tcpPacket == null) return;
+        if (tcpPacket == null)
+            return;
 
         TcpPacket.TcpHeader header = tcpPacket.getHeader();
         boolean isSyn = header.getSyn();
@@ -359,8 +358,7 @@ public class DetectionEngine {
                             traffic.getDestinationIP(),
                             String.format("SYN scan detected: %d SYN packets/sec from %s (%s traffic)",
                                     synTimestamps.size(), remoteIP, direction),
-                            direction
-                    );
+                            direction);
                     synTimestamps.clear();
                 }
             }
@@ -403,8 +401,7 @@ public class DetectionEngine {
                         traffic.getDestinationIP(),
                         String.format("ICMP flood detected: %d packets/sec from %s (%s traffic)",
                                 icmpTimestamps.size(), remoteIP, direction),
-                        direction
-                );
+                        direction);
                 icmpTimestamps.clear();
             }
         }
@@ -437,8 +434,7 @@ public class DetectionEngine {
                         traffic.getDestinationIP(),
                         String.format("Traffic from blacklisted IP %s to port %d (%s traffic, rate: %d pkt/s)",
                                 remoteIP, dstPort, direction, packetRate),
-                        direction
-                );
+                        direction);
             }
         }
     }
@@ -448,13 +444,14 @@ public class DetectionEngine {
      */
     private void analyzePacketPayload(Packet packet, TrafficData traffic, String direction) {
         byte[] payload = packet.getPayload() != null ? packet.getPayload().getRawData() : null;
-        if (payload == null || payload.length == 0) return;
+        if (payload == null || payload.length == 0)
+            return;
 
         String payloadStr = new String(payload).toLowerCase();
         String remoteIP = direction.equals("INBOUND") ? traffic.getSourceIP() : traffic.getDestinationIP();
 
         // SQL Injection patterns
-        String[] sqlPatterns = {"' or '1'='1", "' or 1=1--", "union select", "drop table"};
+        String[] sqlPatterns = { "' or '1'='1", "' or 1=1--", "union select", "drop table" };
         for (String pattern : sqlPatterns) {
             if (payloadStr.contains(pattern)) {
                 if (shouldGenerateAlert(remoteIP, "SQLInjection")) {
@@ -467,7 +464,7 @@ public class DetectionEngine {
         }
 
         // XSS patterns
-        String[] xssPatterns = {"<script>", "javascript:", "onerror=", "onload="};
+        String[] xssPatterns = { "<script>", "javascript:", "onerror=", "onload=" };
         for (String pattern : xssPatterns) {
             if (payloadStr.contains(pattern)) {
                 if (shouldGenerateAlert(remoteIP, "XSS")) {
@@ -484,10 +481,10 @@ public class DetectionEngine {
      * Generate alert with direction information
      */
     private void generateAlert(String type, String severity, String srcIp, String dstIp,
-                               String description, String direction) {
+            String description, String direction) {
         totalThreatsDetected++;
 
-        String alertId = "ALT-" + String.format("%05d", (int)(System.currentTimeMillis() % 100000));
+        String alertId = "ALT-" + String.format("%05d", (int) (System.currentTimeMillis() % 100000));
         String enhancedDescription = String.format("[%s] %s", direction, description);
 
         SecurityAlert alert = new SecurityAlert(alertId, severity, type, srcIp, dstIp,
@@ -553,19 +550,15 @@ public class DetectionEngine {
                 long currentTime = System.currentTimeMillis();
 
                 // Clean packet rate trackers
-                packetRateTracker.values().forEach(list ->
-                        list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
-                synPacketTracker.values().forEach(list ->
-                        list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
-                icmpPacketTracker.values().forEach(list ->
-                        list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
+                packetRateTracker.values().forEach(list -> list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
+                synPacketTracker.values().forEach(list -> list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
+                icmpPacketTracker.values().forEach(list -> list.removeIf(ts -> currentTime - ts > TIME_WINDOW_MS));
 
                 // Clean port scan tracker
                 portScanTracker.entrySet().removeIf(entry -> entry.getValue().isEmpty());
 
                 // Clean alert rate limiter
-                lastAlertTime.entrySet().removeIf(entry ->
-                        currentTime - entry.getValue() > 300000); // 5 minutes
+                lastAlertTime.entrySet().removeIf(entry -> currentTime - entry.getValue() > 300000); // 5 minutes
 
                 // Clean half-open connections
                 halfOpenConnections.entrySet().removeIf(entry -> entry.getValue() == 0);
@@ -577,19 +570,49 @@ public class DetectionEngine {
     }
 
     // Public API methods
-    public void addToWhitelist(String ip) { whitelistedIPs.add(ip); }
-    public void removeFromWhitelist(String ip) { whitelistedIPs.remove(ip); }
-    public void addToBlacklist(String ip) { blacklistedIPs.add(ip); }
-    public void removeFromBlacklist(String ip) { blacklistedIPs.remove(ip); }
+    public void addToWhitelist(String ip) {
+        whitelistedIPs.add(ip);
+    }
 
-    public Set<String> getWhitelistedIPs() { return new HashSet<>(whitelistedIPs); }
-    public Set<String> getBlacklistedIPs() { return new HashSet<>(blacklistedIPs); }
-    public Set<String> getLocalIPAddresses() { return new HashSet<>(localIPAddresses); }
+    public void removeFromWhitelist(String ip) {
+        whitelistedIPs.remove(ip);
+    }
 
-    public long getTotalThreatsDetected() { return totalThreatsDetected; }
-    public long getTotalPacketsAnalyzed() { return totalPacketsAnalyzed; }
-    public long getInboundPackets() { return inboundPackets; }
-    public long getOutboundPackets() { return outboundPackets; }
+    public void addToBlacklist(String ip) {
+        blacklistedIPs.add(ip);
+    }
+
+    public void removeFromBlacklist(String ip) {
+        blacklistedIPs.remove(ip);
+    }
+
+    public Set<String> getWhitelistedIPs() {
+        return new HashSet<>(whitelistedIPs);
+    }
+
+    public Set<String> getBlacklistedIPs() {
+        return new HashSet<>(blacklistedIPs);
+    }
+
+    public Set<String> getLocalIPAddresses() {
+        return new HashSet<>(localIPAddresses);
+    }
+
+    public long getTotalThreatsDetected() {
+        return totalThreatsDetected;
+    }
+
+    public long getTotalPacketsAnalyzed() {
+        return totalPacketsAnalyzed;
+    }
+
+    public long getInboundPackets() {
+        return inboundPackets;
+    }
+
+    public long getOutboundPackets() {
+        return outboundPackets;
+    }
 
     public void shutdown() {
         if (cleanupScheduler != null) {

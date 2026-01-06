@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.database.dao.DAOFactory;
-import org.example.database.dao.interfaces.AlertDAO;
+import org.example.dao.DAOFactory;
+import org.example.dao.impl.AlertDAOImpl;
 import org.example.models.SecurityAlert;
 
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.Optional;
 public class AlertService {
 
     private static AlertService instance;
-    private final AlertDAO alertDAO;
+    private final AlertDAOImpl alertDAO;
 
     private AlertService() {
-        this.alertDAO = (AlertDAO) DAOFactory.getInstance().getAlertDAO();
+        this.alertDAO = DAOFactory.getInstance().getAlertDAO();
     }
 
     public static synchronized AlertService getInstance() {

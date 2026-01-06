@@ -1,7 +1,6 @@
-package org.example.database.dao.impl;
+package org.example.dao.impl;
 
-import org.example.database.DatabaseManager;
-import org.example.database.dao.interfaces.TrafficDAO;
+import org.example.utils.DatabaseManager;
 import org.example.exception.DAOException;
 import org.example.models.TrafficData;
 
@@ -9,10 +8,10 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Implementation of TrafficDAO interface.
- * Wraps existing logic and implements BaseDAO methods.
+ * DAO for Traffic entity.
+ * Handles traffic log operations.
  */
-public class TrafficDAOImpl implements TrafficDAO {
+public class TrafficDAOImpl {
 
     private final DatabaseManager dbManager;
     private final String schema;
@@ -35,8 +34,6 @@ public class TrafficDAOImpl implements TrafficDAO {
     }
 
     // ========== BaseDAO Implementation ==========
-
-    @Override
     public TrafficData save(TrafficData traffic) {
         String sql = String.format(INSERT_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -66,13 +63,9 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error saving traffic: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public TrafficData update(TrafficData entity) {
         throw new UnsupportedOperationException("Traffic records are immutable");
     }
-
-    @Override
     public boolean delete(Long id) {
         String sql = String.format("DELETE FROM %s.traffic_logs WHERE log_id = ?", schema);
         try (Connection conn = dbManager.getConnection();
@@ -83,8 +76,6 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error deleting traffic: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public Optional<TrafficData> findById(Long id) {
         String sql = String.format(SELECT_BY_ID_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -100,8 +91,6 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error finding traffic: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public List<TrafficData> findAll() {
         List<TrafficData> results = new ArrayList<>();
         String sql = String.format(SELECT_ALL_SQL, schema);
@@ -116,8 +105,6 @@ public class TrafficDAOImpl implements TrafficDAO {
         }
         return results;
     }
-
-    @Override
     public long count() {
         String sql = String.format(COUNT_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -133,8 +120,6 @@ public class TrafficDAOImpl implements TrafficDAO {
     }
 
     // ========== TrafficDAO Specific Methods ==========
-
-    @Override
     public List<TrafficData> getByProtocol(String protocol) {
         List<TrafficData> results = new ArrayList<>();
         String sql = String.format(SELECT_BY_PROTOCOL_SQL, schema);
@@ -151,8 +136,6 @@ public class TrafficDAOImpl implements TrafficDAO {
         }
         return results;
     }
-
-    @Override
     public List<TrafficData> getRecentTraffic(int minutes) {
         List<TrafficData> results = new ArrayList<>();
         String sql = String.format(SELECT_RECENT_SQL, schema, minutes);
@@ -167,8 +150,6 @@ public class TrafficDAOImpl implements TrafficDAO {
         }
         return results;
     }
-
-    @Override
     public boolean deleteAllTraffic() {
         String sql = String.format(DELETE_ALL_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -179,8 +160,6 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error deleting all traffic: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public int deleteOldTraffic(int days) {
         String sql = String.format(DELETE_OLD_SQL, schema, days);
         try (Connection conn = dbManager.getConnection();
@@ -190,8 +169,6 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error deleting old traffic: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public int deleteByProtocol(String protocol) {
         String sql = String.format(DELETE_BY_PROTOCOL_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -202,8 +179,6 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error deleting traffic by protocol: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public int deleteByIP(String ipAddress) {
         String sql = String.format(DELETE_BY_IP_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -215,13 +190,9 @@ public class TrafficDAOImpl implements TrafficDAO {
             throw new DAOException("Error deleting traffic by IP: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public long getTotalPacketsAnalyzed() {
         return count();
     }
-
-    @Override
     public int getActiveConnectionsCount() {
         String sql = String.format(
                 "SELECT COUNT(DISTINCT source_ip || ':' || source_port || '-' || destination_ip || ':' || destination_port) "
@@ -239,8 +210,6 @@ public class TrafficDAOImpl implements TrafficDAO {
         }
         return 0;
     }
-
-    @Override
     public Map<String, Object> getTrafficStatistics() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalPackets", getTotalPacketsAnalyzed());

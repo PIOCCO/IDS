@@ -105,7 +105,7 @@ public class MetricsManager {
 
         private void addAlertMetrics() {
                 String severityQuery = "SELECT COUNT(*) FROM " + SCHEMA + ".alerts " +
-                                "WHERE severity = '%s' AND timestamp BETWEEN ? AND ?";
+                                "WHERE severity = '%s' AND created_at BETWEEN ? AND ?";
 
                 // Critical Alerts - Red
                 availableMetrics.add(new ChartMetric(

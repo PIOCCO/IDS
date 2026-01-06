@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.database.dao.DAOFactory;
-import org.example.database.dao.interfaces.TrafficDAO;
+import org.example.dao.DAOFactory;
+import org.example.dao.impl.TrafficDAOImpl;
 import org.example.models.TrafficData;
 
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.Map;
 public class TrafficService {
 
     private static TrafficService instance;
-    private final TrafficDAO trafficDAO;
+    private final TrafficDAOImpl trafficDAO;
 
     private TrafficService() {
-        this.trafficDAO = (TrafficDAO) DAOFactory.getInstance().getTrafficDAO();
+        this.trafficDAO = DAOFactory.getInstance().getTrafficDAO();
     }
 
     public static synchronized TrafficService getInstance() {

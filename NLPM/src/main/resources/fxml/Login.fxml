@@ -85,18 +85,18 @@
                 <Hyperlink fx:id="forgotPasswordLink"
                            text="Forgot password?"
                            onAction="#handleForgotPassword"
-                           style="-fx-text-fill: #2196F3; -fx-font-size: 13px;"/>
+                           style="-fx-text-fill: #D4A017; -fx-font-size: 13px;"/>
             </HBox>
 
             <!-- Error Label -->
             <Label fx:id="errorLabel"
                    text="Error message"
-                   style="-fx-text-fill: #F44336;
+                   style="-fx-text-fill: #8B0000;
                           -fx-font-size: 13px;
                           -fx-background-color: rgba(244, 67, 54, 0.1);
                           -fx-padding: 10;
                           -fx-background-radius: 6;
-                          -fx-border-color: #F44336;
+                          -fx-border-color: #8B0000;
                           -fx-border-radius: 6;
                           -fx-border-width: 1;"
                    wrapText="true"
@@ -107,7 +107,7 @@
                     text="Sign In"
                     onAction="#handleLogin"
                     maxWidth="Infinity"
-                    style="-fx-background-color: #2196F3;
+                    style="-fx-background-color: #D4A017;
                            -fx-text-fill: white;
                            -fx-font-size: 15px;
                            -fx-font-weight: bold;

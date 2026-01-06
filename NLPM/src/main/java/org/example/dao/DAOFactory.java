@@ -1,13 +1,9 @@
-package org.example.database.dao;
+package org.example.dao;
 
-import org.example.database.dao.impl.AlertDAOImpl;
-import org.example.database.dao.impl.MonitoringSessionDAOImpl;
-import org.example.database.dao.impl.TrafficDAOImpl;
-import org.example.database.dao.impl.UserDAOImpl;
-import org.example.database.dao.interfaces.AlertDAO;
-import org.example.database.dao.interfaces.MonitoringSessionDAO;
-import org.example.database.dao.interfaces.TrafficDAO;
-import org.example.database.dao.interfaces.UserDAO;
+import org.example.dao.impl.AlertDAOImpl;
+import org.example.dao.impl.MonitoringSessionDAOImpl;
+import org.example.dao.impl.TrafficDAOImpl;
+import org.example.dao.impl.UserDAOImpl;
 
 /**
  * Factory for creating DAO instances (Singleton pattern).
@@ -18,10 +14,10 @@ public class DAOFactory {
     private static DAOFactory instance;
 
     // DAO instances (lazy initialization)
-    private UserDAO userDAO;
-    private TrafficDAO trafficDAO;
-    private AlertDAO alertDAO;
-    private MonitoringSessionDAO monitoringSessionDAO;
+    private UserDAOImpl userDAO;
+    private TrafficDAOImpl trafficDAO;
+    private AlertDAOImpl alertDAO;
+    private MonitoringSessionDAOImpl monitoringSessionDAO;
 
     // Private constructor for singleton
     private DAOFactory() {
@@ -42,9 +38,9 @@ public class DAOFactory {
     /**
      * Get UserDAO instance.
      *
-     * @return UserDAO
+     * @return UserDAOImpl
      */
-    public synchronized UserDAO getUserDAO() {
+    public synchronized UserDAOImpl getUserDAO() {
         if (userDAO == null) {
             userDAO = new UserDAOImpl();
         }
@@ -54,9 +50,9 @@ public class DAOFactory {
     /**
      * Get TrafficDAO instance.
      *
-     * @return TrafficDAO
+     * @return TrafficDAOImpl
      */
-    public synchronized TrafficDAO getTrafficDAO() {
+    public synchronized TrafficDAOImpl getTrafficDAO() {
         if (trafficDAO == null) {
             trafficDAO = new TrafficDAOImpl();
         }
@@ -66,9 +62,9 @@ public class DAOFactory {
     /**
      * Get AlertDAO instance.
      *
-     * @return AlertDAO
+     * @return AlertDAOImpl
      */
-    public synchronized AlertDAO getAlertDAO() {
+    public synchronized AlertDAOImpl getAlertDAO() {
         if (alertDAO == null) {
             alertDAO = new AlertDAOImpl();
         }
@@ -78,9 +74,9 @@ public class DAOFactory {
     /**
      * Get MonitoringSessionDAO instance.
      *
-     * @return MonitoringSessionDAO
+     * @return MonitoringSessionDAOImpl
      */
-    public synchronized MonitoringSessionDAO getMonitoringSessionDAO() {
+    public synchronized MonitoringSessionDAOImpl getMonitoringSessionDAO() {
         if (monitoringSessionDAO == null) {
             monitoringSessionDAO = new MonitoringSessionDAOImpl();
         }

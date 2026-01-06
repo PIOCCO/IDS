@@ -1,7 +1,6 @@
-package org.example.database.dao.impl;
+package org.example.dao.impl;
 
-import org.example.database.DatabaseManager;
-import org.example.database.dao.interfaces.AlertDAO;
+import org.example.utils.DatabaseManager;
 import org.example.exception.DAOException;
 import org.example.models.SecurityAlert;
 
@@ -9,9 +8,9 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Implementation of AlertDAO interface.
+ * DAO for Alert entity.
  */
-public class AlertDAOImpl implements AlertDAO {
+public class AlertDAOImpl {
 
     private final DatabaseManager dbManager;
     private final String schema;
@@ -53,8 +52,6 @@ public class AlertDAOImpl implements AlertDAO {
     }
 
     // ========== BaseDAO Implementation ==========
-
-    @Override
     public SecurityAlert save(SecurityAlert alert) {
         String sql = String.format(INSERT_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -79,14 +76,10 @@ public class AlertDAOImpl implements AlertDAO {
             throw new DAOException("Error saving alert: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public SecurityAlert update(SecurityAlert alert) {
         updateStatus(alert.getId(), alert.getStatus());
         return alert;
     }
-
-    @Override
     public boolean delete(Integer id) {
         String sql = String.format(DELETE_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -97,8 +90,6 @@ public class AlertDAOImpl implements AlertDAO {
             throw new DAOException("Error deleting alert: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public Optional<SecurityAlert> findById(Integer id) {
         String sql = String.format(SELECT_BY_ID_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -114,8 +105,6 @@ public class AlertDAOImpl implements AlertDAO {
             throw new DAOException("Error finding alert: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public List<SecurityAlert> findAll() {
         List<SecurityAlert> results = new ArrayList<>();
         String sql = String.format(SELECT_ALL_SQL, schema);
@@ -130,8 +119,6 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return results;
     }
-
-    @Override
     public long count() {
         String sql = String.format(COUNT_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -147,8 +134,6 @@ public class AlertDAOImpl implements AlertDAO {
     }
 
     // ========== AlertDAO Specific Methods ==========
-
-    @Override
     public List<SecurityAlert> getBySeverity(String severity) {
         List<SecurityAlert> results = new ArrayList<>();
         String sql = String.format(SELECT_BY_SEVERITY_SQL, schema);
@@ -165,8 +150,6 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return results;
     }
-
-    @Override
     public List<SecurityAlert> getByDirection(String direction) {
         List<SecurityAlert> results = new ArrayList<>();
         String sql = String.format(SELECT_BY_DIRECTION_SQL, schema);
@@ -183,13 +166,9 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return results;
     }
-
-    @Override
     public List<SecurityAlert> getInboundThreats() {
         return getByDirection("INBOUND");
     }
-
-    @Override
     public List<SecurityAlert> getRecentAlerts(int limit) {
         List<SecurityAlert> results = new ArrayList<>();
         String sql = String.format(SELECT_RECENT_SQL, schema);
@@ -206,8 +185,6 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return results;
     }
-
-    @Override
     public boolean updateStatus(String alertId, String newStatus) {
         String sql = String.format(UPDATE_STATUS_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -219,13 +196,9 @@ public class AlertDAOImpl implements AlertDAO {
             throw new DAOException("Error updating alert status: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public boolean deleteAlertById(String alertId) {
         return delete(Integer.parseInt(alertId));
     }
-
-    @Override
     public boolean deleteAllAlerts() {
         String sql = String.format(DELETE_ALL_SQL, schema);
         try (Connection conn = dbManager.getConnection();
@@ -236,8 +209,6 @@ public class AlertDAOImpl implements AlertDAO {
             throw new DAOException("Error deleting all alerts: " + e.getMessage(), e);
         }
     }
-
-    @Override
     public int getCountBySeverity(String severity) {
         String sql = String.format("SELECT COUNT(*) FROM %s.alerts WHERE severity = ?", schema);
         try (Connection conn = dbManager.getConnection();
@@ -253,8 +224,6 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return 0;
     }
-
-    @Override
     public int getInboundThreatCount() {
         String sql = String.format("SELECT COUNT(*) FROM %s.alerts WHERE direction = 'INBOUND'", schema);
         try (Connection conn = dbManager.getConnection();
@@ -268,13 +237,9 @@ public class AlertDAOImpl implements AlertDAO {
         }
         return 0;
     }
-
-    @Override
     public int getTotalAlertsCount() {
         return (int) count();
     }
-
-    @Override
     public Map<String, Integer> getStatsByDirection() {
         Map<String, Integer> stats = new HashMap<>();
         String sql = String.format("SELECT direction, COUNT(*) as count FROM %s.alerts GROUP BY direction", schema);

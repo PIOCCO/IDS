@@ -8,7 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.example.database.DatabaseManager;
+import org.example.utils.DatabaseManager;
 import org.example.services.AuthenticationService;
 import org.example.services.PacketCaptureService;
 import org.example.services.DetectionEngine;

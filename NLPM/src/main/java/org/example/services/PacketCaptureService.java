@@ -1,6 +1,6 @@
 package org.example.services;
 
-import org.example.database.dao.TrafficDAO;
+import org.example.dao.TrafficDAO;
 import org.example.models.TrafficData;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.*;

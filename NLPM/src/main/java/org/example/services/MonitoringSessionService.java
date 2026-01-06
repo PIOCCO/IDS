@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.database.dao.DAOFactory;
-import org.example.database.dao.interfaces.MonitoringSessionDAO;
+import org.example.dao.DAOFactory;
+import org.example.dao.impl.MonitoringSessionDAOImpl;
 import org.example.models.MonitoringSession;
 import org.example.models.SecurityAlert;
 import org.example.models.SessionSnapshot;
@@ -20,10 +20,10 @@ import java.util.Optional;
 public class MonitoringSessionService {
 
     private static MonitoringSessionService instance;
-    private final MonitoringSessionDAO sessionDAO;
+    private final MonitoringSessionDAOImpl sessionDAO;
 
     private MonitoringSessionService() {
-        this.sessionDAO = (MonitoringSessionDAO) DAOFactory.getInstance().getMonitoringSessionDAO();
+        this.sessionDAO = DAOFactory.getInstance().getMonitoringSessionDAO();
     }
 
     public static synchronized MonitoringSessionService getInstance() {
