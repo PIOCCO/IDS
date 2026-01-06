@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controllers.ReportsController"
+            fitToWidth="true" fitToHeight="true"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            styleClass="content-view"
+            stylesheets="@../css/styles.css">
+
+    <VBox spacing="20">
+        
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+            <Label text="Reports &amp; Analytics" styleClass="page-title"/>
+            <Label text="Session monitoring and statistics" styleClass="page-subtitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="refreshBtn" text="🔄 Refresh" styleClass="action-button"/>
+            <Button fx:id="exportBtn" text="📤 Export CSV" styleClass="action-button"/>
+        </HBox>
+
+        <!-- Global Statistics Cards - Full Width with even distribution -->
+        <GridPane hgap="20" vgap="20">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+            </columnConstraints>
+            
+            <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="0">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="Total Sessions" styleClass="stat-label-small"/>
+                <Label fx:id="totalSessionsLabel" text="0" styleClass="stat-value-small"/>
+            </VBox>
+            
+            <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="1">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="Total Packets" styleClass="stat-label-small"/>
+                <Label fx:id="totalPacketsLabel" text="0" styleClass="stat-value-small"/>
+            </VBox>
+            
+            <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="2">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="Total Alerts" styleClass="stat-label-small"/>
+                <Label fx:id="totalAlertsLabel" text="0" styleClass="stat-value-small"/>
+            </VBox>
+            
+            <VBox styleClass="stat-card-small" spacing="5" GridPane.columnIndex="3">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="Avg Duration" styleClass="stat-label-small"/>
+                <Label fx:id="avgDurationLabel" text="0 min" styleClass="stat-value-small"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Charts Row -->
+        <HBox spacing="20" minHeight="260">
+            <!-- Sessions Over Time Chart -->
+            <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="📈 Sessions Over Time (14 Days)" styleClass="chart-title"/>
+                <LineChart fx:id="sessionsOverTimeChart" VBox.vgrow="ALWAYS" 
+                           minHeight="200" prefHeight="200"
+                           createSymbols="true" legendVisible="false"
+                           animated="false">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" tickLabelRotation="45" tickLabelGap="3"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Sessions" side="LEFT" minorTickVisible="false"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+            
+            <!-- Protocol Distribution Chart with Legend on BOTTOM -->
+            <VBox styleClass="chart-container" HBox.hgrow="ALWAYS" minWidth="350">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+                <Label text="🥧 Protocol Distribution" styleClass="chart-title"/>
+                <PieChart fx:id="protocolDistributionChart" VBox.vgrow="ALWAYS" 
+                          minHeight="200" prefHeight="200"
+                          legendVisible="true" 
+                          legendSide="BOTTOM"
+                          labelsVisible="false"
+                          clockwise="true"/>
+            </VBox>
+        </HBox>
+
+        <!-- Filters Bar -->
+        <HBox styleClass="filter-bar" alignment="CENTER_LEFT" spacing="15">
+            <Label text="Filter:" styleClass="filter-label"/>
+            <ComboBox fx:id="timeRangeFilter" promptText="Time Range" prefWidth="150"/>
+            <ComboBox fx:id="statusFilter" promptText="Status" prefWidth="120"/>
+            <TextField fx:id="searchField" promptText="🔍 Search sessions..." prefWidth="200" styleClass="search-field"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="deleteBtn" text="🗑 Delete Selected" styleClass="danger-button"/>
+        </HBox>
+
+        <!-- Sessions Table - Min height for ~10 rows -->
+        <VBox styleClass="table-container" VBox.vgrow="ALWAYS" minHeight="400">
+            <HBox styleClass="table-header" alignment="CENTER_LEFT" spacing="15">
+                <Label text="📋 Monitoring Sessions" styleClass="table-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <TableView fx:id="sessionsTable" VBox.vgrow="ALWAYS" styleClass="data-table" minHeight="350">
+                <columns>
+                    <TableColumn fx:id="sessionIdColumn" text="ID" prefWidth="50"/>
+                    <TableColumn fx:id="sessionNameColumn" text="Session Name" prefWidth="200"/>
+                    <TableColumn fx:id="interfaceColumn" text="Interface" prefWidth="120"/>
+                    <TableColumn fx:id="startTimeColumn" text="Start Time" prefWidth="150"/>
+                    <TableColumn fx:id="durationColumn" text="Duration" prefWidth="100"/>
+                    <TableColumn fx:id="packetsColumn" text="Packets" prefWidth="100"/>
+                    <TableColumn fx:id="alertsColumn" text="Alerts" prefWidth="80"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                </columns>
+                <placeholder>
+                    <Label text="No monitoring sessions recorded yet. Start monitoring from Traffic Monitor tab." 
+                           style="-fx-text-fill: #808080;"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

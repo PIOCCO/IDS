@@ -1,0 +1,235 @@
+/* ============================================
+   IDS MONITOR - INTEGRATED DASHBOARD THEME
+   Stats + Chart + Table with Cockpit styling
+   ============================================ */
+
+/* ===== COCKPIT SECTION ===== */
+.cockpit-section {
+    -fx-background-color: #181b1f;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2a2d32;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.cockpit-header {
+    -fx-background-color: #1f2226;
+    -fx-padding: 12px 18px;
+    -fx-background-radius: 8px 8px 0 0;
+    -fx-border-color: #2a2d32;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.cockpit-title {
+    -fx-text-fill: #d8d9da;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.control-label-mini {
+    -fx-text-fill: #6a6e77;
+    -fx-font-size: 11px;
+}
+
+.time-selector-compact {
+    -fx-background-color: #2a2d32;
+    -fx-text-fill: #d8d9da;
+    -fx-border-color: #3e4045;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 4px 8px;
+    -fx-font-size: 11px;
+}
+
+.btn-mini-refresh {
+    -fx-background-color: transparent;
+    -fx-text-fill: #5294e0;
+    -fx-font-size: 16px;
+    -fx-padding: 4px 8px;
+    -fx-cursor: hand;
+}
+
+.btn-mini-refresh:hover {
+    -fx-text-fill: #73b3ff;
+}
+
+/* ===== CHART AREA (REDUCED HEIGHT) ===== */
+.cockpit-chart-area {
+    -fx-background-color: #0d0f12;
+    -fx-padding: 10px 15px;
+}
+
+.cockpit-chart {
+    -fx-background-color: transparent;
+}
+
+.cockpit-chart .chart-plot-background {
+    -fx-background-color: #0d0f12;
+}
+
+.cockpit-chart .chart-vertical-grid-lines,
+.cockpit-chart .chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 255, 255, 0.04);
+    -fx-stroke-width: 1px;
+}
+
+.cockpit-chart .axis {
+    -fx-tick-label-fill: #5a5e67;
+    -fx-font-size: 10px;
+}
+
+.cockpit-chart .axis-tick-mark {
+    -fx-stroke: #2a2d32;
+}
+
+/* ===== SERIES COLORS ===== */
+.default-color0.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(82, 148, 224, 0.35), rgba(82, 148, 224, 0.02));
+}
+
+.default-color0.chart-series-area-line {
+    -fx-stroke: #5294e0;
+    -fx-stroke-width: 2px;
+}
+
+.default-color1.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(255, 127, 14, 0.35), rgba(255, 127, 14, 0.02));
+}
+
+.default-color1.chart-series-area-line {
+    -fx-stroke: #ff7f0e;
+    -fx-stroke-width: 2px;
+}
+
+.default-color2.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(226, 77, 66, 0.35), rgba(226, 77, 66, 0.02));
+}
+
+.default-color2.chart-series-area-line {
+    -fx-stroke: #e24d42;
+    -fx-stroke-width: 2px;
+}
+
+.default-color3.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(115, 191, 105, 0.35), rgba(115, 191, 105, 0.02));
+}
+
+.default-color3.chart-series-area-line {
+    -fx-stroke: #73bf69;
+    -fx-stroke-width: 2px;
+}
+
+.default-color4.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(163, 82, 204, 0.35), rgba(163, 82, 204, 0.02));
+}
+
+.default-color4.chart-series-area-line {
+    -fx-stroke: #a352cc;
+    -fx-stroke-width: 2px;
+}
+
+.default-color5.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(93, 201, 226, 0.35), rgba(93, 201, 226, 0.02));
+}
+
+.default-color5.chart-series-area-line {
+    -fx-stroke: #5dc9e2;
+    -fx-stroke-width: 2px;
+}
+
+/* ===== DOCK TABS (FULL WIDTH, SPACED) ===== */
+.dock-tabs {
+    -fx-background-color: #1a1c20;
+    -fx-padding: 0 18px;
+    -fx-border-color: #2a2d32;
+    -fx-border-width: 1px 0;
+}
+
+.dock-tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6a6e77;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 14px 28px;
+    -fx-cursor: hand;
+    -fx-border-width: 0 0 3px 0;
+    -fx-border-color: transparent;
+}
+
+.dock-tab:hover {
+    -fx-text-fill: #9fa7b3;
+}
+
+.dock-tab:selected {
+    -fx-text-fill: white;
+}
+
+.tab-protocol:selected {
+    -fx-border-color: #5294e0;
+}
+
+.tab-alert:selected {
+    -fx-border-color: #e24d42;
+}
+
+.tab-session:selected {
+    -fx-border-color: #73bf69;
+}
+
+.tab-traffic:selected {
+    -fx-border-color: #a352cc;
+}
+
+.metrics-count {
+    -fx-text-fill: #5a5e67;
+    -fx-font-size: 11px;
+    -fx-padding: 0 10px 0 0;
+}
+
+/* ===== CHIPS ZONE (FULL WIDTH, GENEROUS SPACING) ===== */
+.dock-chips-zone {
+    -fx-background-color: #15171a;
+    -fx-padding: 16px 24px;
+    -fx-background-radius: 0 0 8px 8px;
+}
+
+.chips-container {
+    -fx-padding: 0;
+}
+
+.metric-chip {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: #aaa;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 10px 22px;
+    -fx-background-radius: 20px;
+    -fx-border-color: rgba(255, 255, 255, 0.12);
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.metric-chip:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== COMBO BOX STYLING ===== */
+.combo-box-popup .list-view {
+    -fx-background-color: #1f2125;
+    -fx-border-color: #3e4045;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d8d9da;
+    -fx-padding: 8px 12px;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #2a2d32;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #5294e0;
+}

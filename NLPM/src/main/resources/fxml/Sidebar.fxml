@@ -28,7 +28,7 @@
 
     <!-- Logo/Title -->
     <VBox styleClass="sidebar-header" spacing="5">
-        <Label text="🛡️ IDS Monitor" styleClass="sidebar-title"/>
+        <Label text="🛡 IDS Monitor" styleClass="sidebar-title"/>
         <Label text="Intrusion Detection System" styleClass="sidebar-subtitle"/>
         <VBox.margin>
             <Insets bottom="20"/>

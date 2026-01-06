@@ -5,7 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import org.example.services.AuthenticationService;
-import org.example.database.dao.UserDAO;
+import org.example.services.UserService;
 import org.example.models.User;
 
 import java.net.URL;
@@ -59,12 +59,12 @@ public class CreateUserController implements Initializable {
     private Label messageLabel;
 
     private AuthenticationService authService;
-    private UserDAO userDAO;
+    private UserService userService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         authService = AuthenticationService.getInstance();
-        userDAO = new UserDAO();
+        userService = UserService.getInstance();
 
         initializeRoleCombo();
         initializeTable();
@@ -99,7 +99,7 @@ public class CreateUserController implements Initializable {
 
     private void loadUsers() {
         try {
-            var users = userDAO.getAllUsers();
+            var users = userService.getAllUsers();
             usersTable.setItems(FXCollections.observableArrayList(users));
             System.out.println("Loaded " + users.size() + " users from database");
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class CreateUserController implements Initializable {
         }
 
         // Check if user already exists in AuthService
-        if (userDAO.getUserByUsername(username) != null) {
+        if (userService.usernameExists(username)) {
             showError("Username already exists");
             return;
         }
@@ -160,7 +160,7 @@ public class CreateUserController implements Initializable {
             // Also save to database
             User newUser = new User(username, password, role);
             newUser.setEmail(email);
-            boolean dbSuccess = userDAO.insertUser(newUser);
+            boolean dbSuccess = true; // Already saved via authService.registerUser
 
             if (dbSuccess) {
                 showSuccess("User '" + username + "' created successfully!");
@@ -205,7 +205,7 @@ public class CreateUserController implements Initializable {
 
         var result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            boolean success = userDAO.deleteUser(selectedUser.getUsername());
+            boolean success = userService.deleteUser(selectedUser.getUsername());
             if (success) {
                 showSuccess("User deleted successfully");
                 loadUsers();

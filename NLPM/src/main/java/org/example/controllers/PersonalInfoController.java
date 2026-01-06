@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.example.database.dao.UserDAO;
+import org.example.services.UserService;
 import org.example.models.User;
 import org.example.services.AuthenticationService;
 import org.example.utils.AuditLogger;
@@ -49,13 +49,13 @@ public class PersonalInfoController implements Initializable {
     private Button deleteAccountBtn;
 
     private AuthenticationService authService;
-    private UserDAO userDAO;
+    private UserService userService;
     private User currentUser;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         authService = AuthenticationService.getInstance();
-        userDAO = new UserDAO();
+        userService = UserService.getInstance();
 
         // Load current user data
         loadUserData();
@@ -79,7 +79,7 @@ public class PersonalInfoController implements Initializable {
 
         // IMPORTANT: Load the COMPLETE user from DATABASE (not from in-memory cache)
         // The AuthenticationService only stores basic user info without email
-        currentUser = userDAO.getUserByUsername(authUser.getUsername());
+        currentUser = userService.findByUsername(authUser.getUsername()).orElse(null);
 
         if (currentUser == null) {
             // Fallback to auth user if not in database
@@ -159,11 +159,15 @@ public class PersonalInfoController implements Initializable {
                 String hashedPassword = hashPassword(newPassword);
                 currentUser.setPassword(hashedPassword);
                 currentUser.setEmail(newEmail);
-                success = userDAO.updateUser(currentUser);
+                success = userService.updateUser(currentUser) != null;
                 System.out.println("Updating email AND password for user: " + currentUser.getUsername());
             } else {
                 // Only email is being changed - use email-only update
-                success = userDAO.updateUserEmail(currentUser.getUsername(), newEmail);
+                try {
+                    success = userService.updateEmail(currentUser.getUsername(), newEmail);
+                } catch (Exception e) {
+                    success = false;
+                }
                 currentUser.setEmail(newEmail); // Update local object
                 System.out.println("Updating email ONLY for user: " + currentUser.getUsername());
             }
@@ -235,7 +239,7 @@ public class PersonalInfoController implements Initializable {
 
                 try {
                     // Delete from database
-                    boolean success = userDAO.deleteUser(currentUser.getUsername());
+                    boolean success = userService.deleteUser(currentUser.getUsername());
 
                     if (success) {
                         // Log action before logout

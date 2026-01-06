@@ -18,7 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Enhanced Packet Capture Service with Smart Interface Filtering
- * Only shows interfaces with valid real IP addresses (excludes APIPA, link-local, etc.)
+ * Only shows interfaces with valid real IP addresses (excludes APIPA,
+ * link-local, etc.)
  */
 public class PacketCaptureService {
     private static PacketCaptureService instance;
@@ -389,9 +390,29 @@ public class PacketCaptureService {
         }
     }
 
-    public boolean isCapturing() { return isCapturing.get(); }
-    public long getPacketsAnalyzed() { return packetsAnalyzed; }
-    public long getBytesProcessed() { return bytesProcessed; }
+    // ===== SESSION TRACKING =====
+    private int currentSessionId = -1;
+
+    public void setCurrentSessionId(int sessionId) {
+        this.currentSessionId = sessionId;
+        System.out.println("📝 Session ID set to: " + sessionId);
+    }
+
+    public int getCurrentSessionId() {
+        return currentSessionId;
+    }
+
+    public boolean isCapturing() {
+        return isCapturing.get();
+    }
+
+    public long getPacketsAnalyzed() {
+        return packetsAnalyzed;
+    }
+
+    public long getBytesProcessed() {
+        return bytesProcessed;
+    }
 
     public void shutdown() {
         stopCapture();

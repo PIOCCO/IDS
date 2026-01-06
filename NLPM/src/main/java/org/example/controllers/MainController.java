@@ -49,7 +49,7 @@ public class MainController implements Initializable {
 
     private void loadDashboard() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Dashboard.fxml"));
-        VBox dashboard = loader.load();
+        ScrollPane dashboard = loader.load();
         dashboardController = loader.getController();
         contentContainer.getChildren().clear();
         contentContainer.getChildren().add(dashboard);
@@ -135,6 +135,21 @@ public class MainController implements Initializable {
             contentContainer.getChildren().clear();
             contentContainer.getChildren().add(personalInfo);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * NEW: Show Reports & Analytics view
+     */
+    public void showReports() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Reports.fxml"));
+            ScrollPane reports = loader.load();
+            contentContainer.getChildren().clear();
+            contentContainer.getChildren().add(reports);
+        } catch (Exception e) {
+            System.err.println("Error loading Reports view: " + e.getMessage());
             e.printStackTrace();
         }
     }

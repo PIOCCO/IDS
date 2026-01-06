@@ -5,7 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.example.database.dao.AlertDAO;
+import org.example.services.AlertService;
 import org.example.models.SecurityAlert;
 
 import java.net.URL;
@@ -68,11 +68,11 @@ public class AlertsController implements Initializable {
 
     private ObservableList<SecurityAlert> alertsList;
     private ObservableList<SecurityAlert> filteredAlertsList;
-    private AlertDAO alertDAO;
+    private AlertService alertService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        alertDAO = new AlertDAO();
+        alertService = AlertService.getInstance();
 
         initializeTable();
         initializeFilters();
@@ -186,7 +186,7 @@ public class AlertsController implements Initializable {
 
     private void loadAlerts() {
         try {
-            List<SecurityAlert> alerts = alertDAO.getAllAlerts();
+            List<SecurityAlert> alerts = alertService.getAllAlerts();
             alertsList = FXCollections.observableArrayList(alerts);
             filteredAlertsList = FXCollections.observableArrayList(alerts);
             alertsTable.setItems(filteredAlertsList);
@@ -364,7 +364,7 @@ public class AlertsController implements Initializable {
      */
     private void clearAllAlerts() {
         try {
-            boolean success = alertDAO.deleteAllAlerts();
+            boolean success = alertService.deleteAllAlerts();
 
             if (success) {
                 // Clear the table view

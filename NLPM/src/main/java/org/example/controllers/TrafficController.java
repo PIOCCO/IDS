@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.example.database.dao.TrafficDAO;
+import org.example.services.TrafficService;
 import org.example.models.TrafficData;
 import org.example.services.PacketCaptureService;
 import org.example.services.AuthenticationService;
@@ -84,17 +84,23 @@ public class TrafficController implements Initializable {
     private Label activeConnectionsLabel;
 
     private ObservableList<TrafficData> trafficList;
-    private TrafficDAO trafficDAO;
+    private TrafficService trafficService;
     private PacketCaptureService captureService;
     private AuthenticationService authService;
     private Timer refreshTimer;
 
+    // Session tracking for Reports
+    private int currentSessionId = -1;
+    private Timer snapshotTimer;
+    private org.example.services.MonitoringSessionService sessionService;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            trafficDAO = new TrafficDAO();
+            trafficService = TrafficService.getInstance();
             captureService = PacketCaptureService.getInstance();
             authService = AuthenticationService.getInstance();
+            sessionService = org.example.services.MonitoringSessionService.getInstance();
 
             initializeTable();
             initializeControls();
@@ -102,11 +108,44 @@ public class TrafficController implements Initializable {
             loadNetworkInterfaces();
             updateStatistics();
 
+            // ===== CRITICAL: Restore session state from singleton =====
+            // This ensures session state persists across page navigations
+            restoreSessionState();
+
             System.out.println("TrafficController initialized successfully");
         } catch (Exception e) {
             System.err.println("Error initializing TrafficController: " + e.getMessage());
             e.printStackTrace();
             showError("Failed to initialize Traffic Monitor: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Restore session state from PacketCaptureService singleton.
+     * This is crucial for maintaining session continuity when user navigates
+     * away from Traffic page and returns.
+     */
+    private void restoreSessionState() {
+        // Check if capture is still running (user navigated away without stopping)
+        if (captureService.isCapturing()) {
+            // Restore session ID from the singleton
+            currentSessionId = captureService.getCurrentSessionId();
+
+            if (currentSessionId > 0) {
+                System.out.println("🔄 Restored active session: " + currentSessionId);
+
+                // Sync UI to reflect active capture state
+                syncUIWithCaptureState();
+
+                // Restart snapshot timer for this controller instance
+                startSnapshotTimer();
+
+                // Start auto-refresh timer
+                startAutoRefresh();
+            }
+        } else {
+            // No active capture, reset session ID
+            currentSessionId = -1;
         }
     }
 
@@ -251,7 +290,7 @@ public class TrafficController implements Initializable {
 
     private void loadTrafficData() {
         try {
-            List<TrafficData> traffic = trafficDAO.getRecentTraffic(5); // Last 5 minutes
+            List<TrafficData> traffic = trafficService.getRecentTraffic(5); // Last 5 minutes
             trafficList = FXCollections.observableArrayList(traffic);
 
             if (trafficTable != null) {
@@ -282,7 +321,7 @@ public class TrafficController implements Initializable {
             if (protocol.equals("All")) {
                 loadTrafficData();
             } else {
-                List<TrafficData> filtered = trafficDAO.getTrafficByProtocol(protocol);
+                List<TrafficData> filtered = trafficService.getTrafficByProtocol(protocol);
                 trafficList = FXCollections.observableArrayList(filtered);
                 if (trafficTable != null) {
                     trafficTable.setItems(trafficList);
@@ -322,6 +361,22 @@ public class TrafficController implements Initializable {
             // Extract interface name (before the " - " separator)
             String interfaceName = selectedInterface.split(" - ")[0];
 
+            // ===== SESSION TRACKING: Create session BEFORE starting capture =====
+            String username = authService.getCurrentUser() != null ? authService.getCurrentUser().getUsername()
+                    : "unknown";
+            String sessionName = "Session " + java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            currentSessionId = sessionService.createSession(sessionName, interfaceName, username);
+
+            if (currentSessionId <= 0) {
+                System.err.println("⚠️ Warning: Failed to create session in database");
+            } else {
+                System.out.println("✅ Created monitoring session ID: " + currentSessionId);
+                // Set session ID in capture service for alert linking
+                captureService.setCurrentSessionId(currentSessionId);
+            }
+
             // Check 4: Try to start capture
             boolean started = captureService.startCapture(interfaceName);
 
@@ -340,13 +395,22 @@ public class TrafficController implements Initializable {
                 // Log the action
                 logAction("START_MONITORING", "Started packet capture on interface: " + interfaceName);
 
+                // ===== SESSION TRACKING: Start snapshot timer =====
+                startSnapshotTimer();
+
                 // Start auto-refresh timer
                 startAutoRefresh();
 
-                showSuccess("Network monitoring started successfully");
+                showSuccess("Network monitoring started successfully" +
+                        (currentSessionId > 0 ? " (Session #" + currentSessionId + ")" : ""));
                 System.out.println("Network monitoring started on: " + interfaceName);
             } else {
                 // Check 5: Capture failed - distinct error message
+                // Mark session as failed if created
+                if (currentSessionId > 0) {
+                    sessionService.endSession(currentSessionId);
+                    currentSessionId = -1;
+                }
                 showError(
                         "Erreur: Échec du démarrage de la capture. Vérifiez les privilèges administrateur ou l'interface sélectionnée.");
             }
@@ -360,6 +424,9 @@ public class TrafficController implements Initializable {
 
     private void stopMonitoring() {
         try {
+            // ===== SESSION TRACKING: Stop snapshot timer FIRST =====
+            stopSnapshotTimer();
+
             captureService.stopCapture();
 
             if (statusLabel != null) {
@@ -376,15 +443,153 @@ public class TrafficController implements Initializable {
             // Log the action
             logAction("STOP_MONITORING", "Stopped packet capture");
 
+            // ===== SESSION TRACKING: Finalize session =====
+            if (currentSessionId > 0) {
+                finalizeSession();
+                currentSessionId = -1;
+            }
+
             // Stop auto-refresh
             stopAutoRefresh();
 
-            showInfo("Network monitoring stopped");
+            showInfo("Network monitoring stopped. Report available in Reports tab.");
             System.out.println("Network monitoring stopped");
         } catch (Exception e) {
             System.err.println("Error stopping monitoring: " + e.getMessage());
             e.printStackTrace();
             showError("Failed to stop monitoring: " + e.getMessage());
+        }
+    }
+
+    // ==================== SESSION TRACKING METHODS ====================
+
+    private void startSnapshotTimer() {
+        stopSnapshotTimer(); // Stop any existing timer
+
+        snapshotTimer = new Timer(true); // daemon thread
+        snapshotTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    if (currentSessionId > 0 && captureService.isCapturing()) {
+                        captureSessionSnapshot();
+                    }
+                } catch (Exception e) {
+                    System.err.println("❌ Snapshot error: " + e.getMessage());
+                }
+            }
+        }, 30000, 30000); // Delay 30s, Period 30s
+
+        System.out.println("📸 Snapshot timer started (every 30s)");
+    }
+
+    private void stopSnapshotTimer() {
+        if (snapshotTimer != null) {
+            snapshotTimer.cancel();
+            snapshotTimer = null;
+            System.out.println("📸 Snapshot timer stopped");
+        }
+    }
+
+    private void captureSessionSnapshot() {
+        try {
+            org.example.models.SessionSnapshot snapshot = new org.example.models.SessionSnapshot();
+            snapshot.setSessionId(currentSessionId);
+            snapshot.setSnapshotTime(java.time.LocalDateTime.now());
+            snapshot.setPacketsCount((int) captureService.getPacketsAnalyzed());
+            snapshot.setBytesCount(captureService.getBytesProcessed());
+            snapshot.setPacketRate(calculatePacketRate());
+
+            // Protocol counts from current table data
+            if (trafficList != null) {
+                snapshot.setTcpCount((int) trafficList.stream()
+                        .filter(t -> "TCP".equals(t.getProtocol())).count());
+                snapshot.setUdpCount((int) trafficList.stream()
+                        .filter(t -> "UDP".equals(t.getProtocol())).count());
+                snapshot.setHttpCount((int) trafficList.stream()
+                        .filter(t -> "HTTP".equals(t.getProtocol())).count());
+            }
+
+            boolean saved = sessionService.insertSnapshot(snapshot);
+            if (saved) {
+                System.out.println("📸 Snapshot captured for session " + currentSessionId);
+            }
+        } catch (Exception e) {
+            System.err.println("Error capturing snapshot: " + e.getMessage());
+        }
+    }
+
+    private int calculatePacketRate() {
+        // Simple approximation: packets per second based on current stats
+        try {
+            return (int) (captureService.getPacketsAnalyzed() / 30); // Average over 30 seconds
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private void finalizeSession() {
+        try {
+            System.out.println("🔄 Finalizing session " + currentSessionId + "...");
+
+            // 1. End session (set end_time, duration, status)
+            boolean ended = sessionService.endSession(currentSessionId);
+            if (!ended) {
+                System.err.println("❌ Failed to end session");
+                return;
+            }
+
+            // 2. Collect statistics
+            org.example.models.SessionStatistics stats = new org.example.models.SessionStatistics();
+            stats.setSessionId(currentSessionId);
+
+            // Packet stats
+            stats.setTotalPacketsCaptured(captureService.getPacketsAnalyzed());
+            stats.setTotalBytesProcessed(captureService.getBytesProcessed());
+
+            // Protocol distribution from traffic table
+            if (trafficList != null) {
+                stats.setTcpPackets((int) trafficList.stream()
+                        .filter(t -> "TCP".equals(t.getProtocol())).count());
+                stats.setUdpPackets((int) trafficList.stream()
+                        .filter(t -> "UDP".equals(t.getProtocol())).count());
+                stats.setHttpPackets((int) trafficList.stream()
+                        .filter(t -> "HTTP".equals(t.getProtocol())).count());
+                stats.setHttpsPackets((int) trafficList.stream()
+                        .filter(t -> "HTTPS".equals(t.getProtocol())).count());
+                stats.setDnsPackets((int) trafficList.stream()
+                        .filter(t -> "DNS".equals(t.getProtocol())).count());
+                stats.setIcmpPackets((int) trafficList.stream()
+                        .filter(t -> "ICMP".equals(t.getProtocol())).count());
+                stats.setSshPackets((int) trafficList.stream()
+                        .filter(t -> "SSH".equals(t.getProtocol())).count());
+            }
+
+            // Alert stats from session
+            int alertCount = sessionService.getSessionAlertCount(currentSessionId);
+            stats.setTotalAlerts(alertCount);
+
+            // Average packet size
+            if (stats.getTotalPacketsCaptured() > 0) {
+                stats.setAveragePacketSize(
+                        (double) stats.getTotalBytesProcessed() / stats.getTotalPacketsCaptured());
+            }
+
+            // 3. Save statistics
+            boolean saved = sessionService.updateSessionStatistics(currentSessionId, stats);
+
+            if (saved) {
+                System.out.println("✅ Session " + currentSessionId + " finalized successfully");
+                System.out.println("   📊 " + stats.getTotalPacketsCaptured() + " packets");
+                System.out.println("   📦 " + stats.getTotalBytesProcessed() + " bytes");
+                System.out.println("   🚨 " + stats.getTotalAlerts() + " alerts");
+            } else {
+                System.err.println("❌ Failed to save session statistics");
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Error finalizing session: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -427,7 +632,7 @@ public class TrafficController implements Initializable {
      */
     private void clearAllTraffic() {
         try {
-            boolean success = trafficDAO.deleteAllTraffic();
+            boolean success = trafficService.deleteAllTraffic();
 
             if (success) {
                 // Clear the table view
@@ -600,7 +805,7 @@ public class TrafficController implements Initializable {
                 threatsLabel.setText(String.valueOf(threats));
             }
             if (activeConnectionsLabel != null) {
-                int connections = trafficDAO.getActiveConnectionsCount();
+                int connections = trafficService.getActiveConnectionsCount();
                 activeConnectionsLabel.setText(String.valueOf(connections));
             }
         } catch (Exception e) {

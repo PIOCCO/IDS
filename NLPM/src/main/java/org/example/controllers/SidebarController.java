@@ -98,6 +98,11 @@ public class SidebarController implements Initializable {
             personalInfoBtn.setOnAction(e -> mainController.showPersonalInfo());
         }
 
+        // NEW: Reports button - navigates to Reports & Analytics page
+        if (reportsBtn != null) {
+            reportsBtn.setOnAction(e -> switchView(reportsBtn, () -> mainController.showReports()));
+        }
+
         // Display current user information
         updateUserDisplay();
     }
