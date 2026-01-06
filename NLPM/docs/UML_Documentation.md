@@ -6,7 +6,7 @@
 - Capturer et analyser le trafic réseau en temps réel
 - Détecter les menaces (Port Scan, DDoS, Brute Force, SQL Injection, XSS)
 - Gérer les alertes de sécurité
-- Authentifier les utilisateurs (Admin, User, Viewer)
+- Authentifier les utilisateurs (Admin, User)
 
 ---
 
@@ -17,7 +17,6 @@ graph TB
     subgraph Acteurs
         Admin["👑 Administrateur"]
         User["👤 Utilisateur"]
-        Viewer["👁️ Viewer"]
     end
     
     subgraph "Système IDS Monitor"
@@ -52,27 +51,22 @@ graph TB
     User --> UC6
     User --> UC7
     User --> UC10
-    
-    Viewer --> UC1
-    Viewer --> UC2
-    Viewer --> UC5
-    Viewer --> UC10
 ```
 
 ### Tableau des Cas d'Utilisation
 
-| ID | Cas d'Utilisation | Admin | User | Viewer |
-|----|-------------------|-------|------|--------|
-| UC1 | Se connecter | ✅ | ✅ | ✅ |
-| UC2 | Voir le Dashboard | ✅ | ✅ | ✅ |
-| UC3 | Monitorer le Trafic | ✅ | ✅ | ❌ |
-| UC4 | Démarrer/Arrêter Capture | ✅ | ✅ | ❌ |
-| UC5 | Voir les Alertes | ✅ | ✅ | ✅ |
-| UC6 | Exporter CSV | ✅ | ✅ | ❌ |
-| UC7 | Effacer le Trafic | ✅ | ✅ | ❌ |
-| UC8 | Gérer les Utilisateurs | ✅ | ❌ | ❌ |
-| UC9 | Configurer Paramètres | ✅ | ❌ | ❌ |
-| UC10 | Se déconnecter | ✅ | ✅ | ✅ |
+| ID | Cas d'Utilisation | Admin | User |
+|----|-------------------|-------|------|
+| UC1 | Se connecter | ✅ | ✅ |
+| UC2 | Voir le Dashboard | ✅ | ✅ |
+| UC3 | Monitorer le Trafic | ✅ | ✅ |
+| UC4 | Démarrer/Arrêter Capture | ✅ | ✅ |
+| UC5 | Voir les Alertes | ✅ | ✅ |
+| UC6 | Exporter CSV | ✅ | ✅ |
+| UC7 | Effacer le Trafic | ✅ | ✅ |
+| UC8 | Gérer les Utilisateurs | ✅ | ❌ |
+| UC9 | Configurer Paramètres | ✅ | ❌ |
+| UC10 | Se déconnecter | ✅ | ✅ |
 
 ---
 
@@ -80,136 +74,99 @@ graph TB
 
 ```mermaid
 classDiagram
-    class Main {
-        +start(Stage stage)
-        +main(String[] args)
-        -handleApplicationClose()
-    }
-    
-    class AuthenticationService {
-        -instance: AuthenticationService
-        -currentUser: User
-        -users: HashMap
-        +getInstance(): AuthenticationService
-        +authenticate(username, password, rememberMe): boolean
-        +logout()
-        +getCurrentUser(): User
-    }
-    
-    class PacketCaptureService {
-        -instance: PacketCaptureService
-        -handle: PcapHandle
-        -isCapturing: AtomicBoolean
-        -captureTask: Future
-        +getInstance(): PacketCaptureService
-        +startCapture(deviceName): boolean
-        +stopCapture()
-        +getAvailableInterfaces(): List
-    }
-    
-    class DetectionEngine {
-        -instance: DetectionEngine
-        -portScanTracker: ConcurrentHashMap
-        -connectionTracker: ConcurrentHashMap
-        +getInstance(): DetectionEngine
-        +analyzeTraffic(TrafficData, Packet)
-        +detectPortScan(sourceIP, destPort)
-        +detectDDoS(destIP)
-        +detectBruteForce(sourceIP, service)
-    }
-    
-    class DatabaseManager {
-        -instance: DatabaseManager
-        -dataSource: HikariDataSource
-        +getInstance(): DatabaseManager
-        +getConnection(): Connection
-        +getSchema(): String
-    }
-    
-    class TrafficDAO {
-        -dbManager: DatabaseManager
-        +getAllTraffic(): List
-        +getRecentTraffic(limit): List
-        +insertTraffic(TrafficData): boolean
-        +deleteAllTraffic(): boolean
-    }
-    
-    class AlertDAO {
-        -dbManager: DatabaseManager
-        +getAllAlerts(): List
-        +insertAlert(SecurityAlert): boolean
-        +updateAlertStatus(alertId, status): boolean
-    }
-    
-    class TrafficController {
-        -trafficTable: TableView
-        -captureService: PacketCaptureService
-        -trafficDAO: TrafficDAO
-        +initialize()
-        +startMonitoring()
-        +stopMonitoring()
-        +handleClearTraffic()
-        +handleExportTraffic()
-    }
-    
-    class LoginController {
-        -usernameField: TextField
-        -passwordField: PasswordField
-        -authService: AuthenticationService
-        +handleLogin()
-        +handleQuickAdminLogin()
-        +handleQuickUserLogin()
+    class User {
+        -int userId
+        -String username
+        -String passwordHash
+        -String role
+        -String email
+        -boolean isActive
+        +getUsername(): String
+        +getRole(): String
+        +isActive(): boolean
     }
     
     class TrafficData {
-        -protocol: String
-        -sourceIP: String
-        -sourcePort: String
-        -destinationIP: String
-        -destinationPort: String
-        -packetSize: long
-        -timestamp: String
-        -status: String
+        -long logId
+        -String protocol
+        -String sourceIP
+        -int sourcePort
+        -String destinationIP
+        -int destinationPort
+        -long packetSize
+        -String status
+        -LocalDateTime timestamp
+        +getProtocol(): String
+        +getSourceIP(): String
+        +getDestinationIP(): String
     }
     
     class SecurityAlert {
-        -id: String
-        -severity: String
-        -type: String
-        -sourceIP: String
-        -destinationIP: String
-        -description: String
-        -timestamp: LocalDateTime
-        -status: String
+        -String id
+        -String severity
+        -String type
+        -String sourceIP
+        -String destinationIP
+        -String description
+        -LocalDateTime timestamp
+        -String status
+        -String direction
+        +getSeverity(): String
+        +getType(): String
+        +getStatus(): String
     }
     
-    class User {
-        -username: String
-        -passwordHash: String
-        -role: String
+    class MonitoringSession {
+        -int sessionId
+        -String sessionName
+        -String interfaceName
+        -String status
+        -LocalDateTime startTime
+        -LocalDateTime endTime
+        -String createdBy
+        +getSessionId(): int
+        +getStatus(): String
+        +getDurationMinutes(): long
     }
     
-    Main --> AuthenticationService
-    Main --> DatabaseManager
-    Main --> DetectionEngine
+    class SessionStatistics {
+        -int sessionId
+        -long totalPackets
+        -long totalBytes
+        -int alertCount
+        -Map~String,Long~ protocolDistribution
+        +getTotalPackets(): long
+        +getAlertCount(): int
+    }
     
-    TrafficController --> PacketCaptureService
-    TrafficController --> TrafficDAO
-    TrafficController --> DetectionEngine
+    class SessionSnapshot {
+        -int snapshotId
+        -int sessionId
+        -long packetsCount
+        -long bytesCount
+        -int alertCount
+        -LocalDateTime timestamp
+        +getPacketsCount(): long
+        +getTimestamp(): LocalDateTime
+    }
     
-    LoginController --> AuthenticationService
+    class ChartMetric {
+        -String id
+        -String displayName
+        -String category
+        -String color
+        -String query
+        -MetricType type
+        -boolean enabled
+        +getId(): String
+        +getColor(): String
+        +isEnabled(): boolean
+    }
     
-    PacketCaptureService --> TrafficDAO
-    PacketCaptureService --> DetectionEngine
-    
-    DetectionEngine --> AlertDAO
-    
-    TrafficDAO --> DatabaseManager
-    AlertDAO --> DatabaseManager
-    
-    TrafficDAO ..> TrafficData
-    AlertDAO ..> SecurityAlert
-    AuthenticationService ..> User
+    MonitoringSession "1" --> "*" SessionSnapshot : has
+    MonitoringSession "1" --> "1" SessionStatistics : has
+    MonitoringSession "1" --> "*" SecurityAlert : generates
+    TrafficData --> SecurityAlert : triggers
 ```
 
 ### Relations entre Classes
