@@ -87,10 +87,15 @@
         <HBox styleClass="table-header" alignment="CENTER_LEFT" spacing="15">
             <Label text="Live Traffic Data (Last 5 Minutes)" styleClass="table-title"/>
             <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="showDetailsBtn"
+                    text="📊 Show Details"
+                    onAction="#handleShowDetails"
+                    styleClass="action-button"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #9C27B0; -fx-text-fill: white;"/>
             <Button fx:id="reloadBtn"
                     text="🔄 Reload"
                     styleClass="action-button"
-                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #D4A017; -fx-text-fill: white;"/>
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #2196F3; -fx-text-fill: white;"/>
             <Button fx:id="exportBtn"
                     text="📤 Export CSV"
                     styleClass="action-button primary-button"
@@ -98,7 +103,7 @@
             <Button fx:id="clearTrafficBtn"
                     text="🗑️ Clear Traffic"
                     styleClass="action-button danger-button"
-                    style="-fx-background-color: #8B0000; -fx-text-fill: white;"/>
+                    style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
         </HBox>
 
         <TableView fx:id="trafficTable" styleClass="data-table" VBox.vgrow="ALWAYS">
@@ -114,5 +119,14 @@
             </columns>
         </TableView>
     </VBox>
+
+    <!-- Info Tip -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-background-color: rgba(156, 39, 176, 0.1); -fx-padding: 10;
+                 -fx-background-radius: 6; -fx-border-color: #9C27B0; -fx-border-radius: 6; -fx-border-width: 1;">
+        <Label text="💡" style="-fx-font-size: 14px;"/>
+        <Label text="Tip: Double-click a row or select it and click 'Show Details' to view comprehensive traffic analysis"
+               style="-fx-text-fill: #ffffff; -fx-font-size: 11px;"/>
+    </HBox>
 
 </VBox>

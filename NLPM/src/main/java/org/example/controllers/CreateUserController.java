@@ -153,24 +153,20 @@ public class CreateUserController implements Initializable {
             return;
         }
 
-        // Create user
-        boolean success = authService.registerUser(username, password, role);
+        // Create user via UserService (which saves to database with hashed password)
+        try {
+            User newUser = userService.createUser(username, password, role, email);
 
-        if (success) {
-            // Also save to database
-            User newUser = new User(username, password, role);
-            newUser.setEmail(email);
-            boolean dbSuccess = true; // Already saved via authService.registerUser
+            // Also register in AuthService for in-memory authentication
+            authService.registerUser(username, password, role);
 
-            if (dbSuccess) {
-                showSuccess("User '" + username + "' created successfully!");
-                clearForm();
-                loadUsers();
-            } else {
-                showError("User created in memory but failed to save to database");
-            }
-        } else {
-            showError("Failed to create user");
+            showSuccess("User '" + username + "' created successfully!");
+            clearForm();
+            loadUsers();
+        } catch (org.example.exception.DuplicateDataException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("Failed to create user: " + e.getMessage());
         }
     }
 

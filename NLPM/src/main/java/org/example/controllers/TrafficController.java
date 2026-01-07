@@ -17,6 +17,8 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class TrafficController implements Initializable {
 
@@ -894,5 +896,349 @@ public class TrafficController implements Initializable {
             System.err.println("Error during cleanup: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    // Add this method to TrafficController.java
+
+    /**
+     * Handle show details button - displays detailed information about selected traffic
+     */
+    @FXML
+    private void handleShowDetails() {
+        TrafficData selectedTraffic = trafficTable.getSelectionModel().getSelectedItem();
+
+        if (selectedTraffic == null) {
+            showError("Please select a traffic entry to view details");
+            return;
+        }
+
+        showTrafficDetails(selectedTraffic);
+    }
+
+    /**
+     * Display detailed traffic information dialog
+     */
+    private void showTrafficDetails(TrafficData traffic) {
+        Alert detailsDialog = new Alert(Alert.AlertType.INFORMATION);
+        detailsDialog.setTitle("Traffic Details");
+        detailsDialog.setHeaderText("📊 Detailed Traffic Information");
+
+        // Build detailed information
+        StringBuilder details = new StringBuilder();
+
+        // Basic Information
+        details.append("═══════════════════════════════════════\n");
+        details.append("📋 BASIC INFORMATION\n");
+        details.append("═══════════════════════════════════════\n");
+        details.append(String.format("Protocol:           %s\n", traffic.getProtocol()));
+        details.append(String.format("Status:             %s\n", traffic.getStatus()));
+        details.append(String.format("Timestamp:          %s\n", traffic.getTimestamp()));
+        details.append(String.format("Packet Size:        %,d bytes (%.2f KB)\n",
+                traffic.getPacketSize(), traffic.getPacketSize() / 1024.0));
+
+        // Source Information
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("📤 SOURCE INFORMATION\n");
+        details.append("═══════════════════════════════════════\n");
+        details.append(String.format("IP Address:         %s\n", traffic.getSourceIP()));
+        details.append(String.format("Port:               %s\n", traffic.getSourcePort()));
+        details.append(String.format("Location:           %s\n", getIPLocation(traffic.getSourceIP())));
+        details.append(String.format("Type:               %s\n", getIPType(traffic.getSourceIP())));
+
+        // Destination Information
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("📥 DESTINATION INFORMATION\n");
+        details.append("═══════════════════════════════════════\n");
+        details.append(String.format("IP Address:         %s\n", traffic.getDestinationIP()));
+        details.append(String.format("Port:               %s\n", traffic.getDestinationPort()));
+        details.append(String.format("Location:           %s\n", getIPLocation(traffic.getDestinationIP())));
+        details.append(String.format("Type:               %s\n", getIPType(traffic.getDestinationIP())));
+
+        // Port Information
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("🔌 PORT INFORMATION\n");
+        details.append("═══════════════════════════════════════\n");
+        try {
+            int srcPort = Integer.parseInt(traffic.getSourcePort());
+            int dstPort = Integer.parseInt(traffic.getDestinationPort());
+
+            details.append(String.format("Source Port:        %d (%s)\n",
+                    srcPort, getPortDescription(srcPort)));
+            details.append(String.format("Destination Port:   %d (%s)\n",
+                    dstPort, getPortDescription(dstPort)));
+            details.append(String.format("Port Category:      %s\n",
+                    getPortCategory(dstPort)));
+        } catch (NumberFormatException e) {
+            details.append("Port information unavailable\n");
+        }
+
+        // Traffic Direction
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("🔄 TRAFFIC DIRECTION\n");
+        details.append("═══════════════════════════════════════\n");
+        String direction = determineTrafficDirection(traffic.getSourceIP(), traffic.getDestinationIP());
+        details.append(String.format("Direction:          %s\n", direction));
+        details.append(String.format("Flow:               %s → %s\n",
+                traffic.getSourceIP(), traffic.getDestinationIP()));
+
+        // Protocol-Specific Information
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("🔍 PROTOCOL ANALYSIS\n");
+        details.append("═══════════════════════════════════════\n");
+        details.append(getProtocolAnalysis(traffic));
+
+        // Security Assessment
+        details.append("\n═══════════════════════════════════════\n");
+        details.append("🛡️ SECURITY ASSESSMENT\n");
+        details.append("═══════════════════════════════════════\n");
+        details.append(getSecurityAssessment(traffic));
+
+        detailsDialog.setContentText(details.toString());
+
+        // Style the dialog
+        org.example.utils.DialogUtils.styleAlert(detailsDialog);
+
+        // Make the dialog resizable and larger
+        detailsDialog.setResizable(true);
+        detailsDialog.getDialogPane().setPrefSize(700, 600);
+
+        // Style the content text as monospace for better alignment
+        detailsDialog.getDialogPane().lookup(".content.label").setStyle(
+                "-fx-font-family: 'Courier New', monospace; " +
+                        "-fx-font-size: 12px; " +
+                        "-fx-text-fill: #e0e0e0;"
+        );
+
+        detailsDialog.showAndWait();
+    }
+
+    /**
+     * Determine traffic direction
+     */
+    private String determineTrafficDirection(String srcIP, String dstIP) {
+        boolean srcIsLocal = isLocalIP(srcIP);
+        boolean dstIsLocal = isLocalIP(dstIP);
+
+        if (!srcIsLocal && dstIsLocal) {
+            return "⬇️ INBOUND (External → Local)";
+        } else if (srcIsLocal && !dstIsLocal) {
+            return "⬆️ OUTBOUND (Local → External)";
+        } else if (srcIsLocal && dstIsLocal) {
+            return "🔄 LOCAL (Internal Traffic)";
+        } else {
+            return "↔️ TRANSIT (External → External)";
+        }
+    }
+
+    /**
+     * Check if IP is local
+     */
+    private boolean isLocalIP(String ip) {
+        return ip.startsWith("127.") || ip.startsWith("192.168.") ||
+                ip.startsWith("10.") || ip.startsWith("172.16.") ||
+                ip.equals("0.0.0.0") || ip.equals("::1");
+    }
+
+    /**
+     * Get IP location/type description
+     */
+    private String getIPLocation(String ip) {
+        if (ip.startsWith("127.")) return "Loopback (This Computer)";
+        if (ip.startsWith("192.168.")) return "Private Network (Class C)";
+        if (ip.startsWith("10.")) return "Private Network (Class A)";
+        if (ip.startsWith("172.16.") || ip.startsWith("172.31.")) return "Private Network (Class B)";
+        if (ip.equals("0.0.0.0")) return "Any Address";
+        if (ip.startsWith("169.254.")) return "Link-Local (APIPA)";
+        if (ip.startsWith("224.") || ip.startsWith("239.")) return "Multicast";
+        return "Internet (Public)";
+    }
+
+    /**
+     * Get IP type
+     */
+    private String getIPType(String ip) {
+        if (isLocalIP(ip)) return "Private";
+        return "Public";
+    }
+
+    /**
+     * Get port description
+     */
+    private String getPortDescription(int port) {
+        return switch (port) {
+            case 20, 21 -> "FTP (File Transfer)";
+            case 22 -> "SSH (Secure Shell)";
+            case 23 -> "Telnet";
+            case 25 -> "SMTP (Email)";
+            case 53 -> "DNS (Domain Name)";
+            case 67, 68 -> "DHCP";
+            case 80 -> "HTTP (Web)";
+            case 110 -> "POP3 (Email)";
+            case 143 -> "IMAP (Email)";
+            case 443 -> "HTTPS (Secure Web)";
+            case 445 -> "SMB (File Sharing)";
+            case 465 -> "SMTPS (Secure Email)";
+            case 587 -> "SMTP Submission";
+            case 993 -> "IMAPS (Secure Email)";
+            case 995 -> "POP3S (Secure Email)";
+            case 1433 -> "MS SQL Server";
+            case 3306 -> "MySQL Database";
+            case 3389 -> "RDP (Remote Desktop)";
+            case 5432 -> "PostgreSQL Database";
+            case 5900 -> "VNC (Remote Desktop)";
+            case 8080 -> "HTTP Alternate";
+            case 8443 -> "HTTPS Alternate";
+            default -> port < 1024 ? "Well-Known Port" :
+                    port < 49152 ? "Registered Port" : "Dynamic Port";
+        };
+    }
+
+    /**
+     * Get port category
+     */
+    private String getPortCategory(int port) {
+        if (port < 1024) return "System/Well-Known";
+        if (port < 49152) return "User/Registered";
+        return "Dynamic/Private";
+    }
+
+    /**
+     * Get protocol-specific analysis
+     */
+    private String getProtocolAnalysis(TrafficData traffic) {
+        StringBuilder analysis = new StringBuilder();
+        String protocol = traffic.getProtocol();
+
+        analysis.append(String.format("Protocol Type:      %s\n", protocol));
+
+        switch (protocol.toUpperCase()) {
+            case "TCP":
+                analysis.append("Connection Type:    Connection-oriented\n");
+                analysis.append("Reliability:        Reliable delivery\n");
+                analysis.append("Use Case:           Web, Email, File Transfer\n");
+                break;
+            case "UDP":
+                analysis.append("Connection Type:    Connectionless\n");
+                analysis.append("Reliability:        Best-effort delivery\n");
+                analysis.append("Use Case:           DNS, Streaming, Gaming\n");
+                break;
+            case "HTTP":
+                analysis.append("Application:        Web Traffic\n");
+                analysis.append("Security:           ⚠️ Unencrypted\n");
+                analysis.append("Recommendation:     Use HTTPS when possible\n");
+                break;
+            case "HTTPS":
+                analysis.append("Application:        Secure Web Traffic\n");
+                analysis.append("Security:           ✅ Encrypted (TLS/SSL)\n");
+                analysis.append("Recommendation:     Secure protocol\n");
+                break;
+            case "DNS":
+                analysis.append("Application:        Domain Name Resolution\n");
+                analysis.append("Security:           Usually unencrypted\n");
+                analysis.append("Recommendation:     Consider DNS over HTTPS\n");
+                break;
+            case "SSH":
+                analysis.append("Application:        Secure Remote Access\n");
+                analysis.append("Security:           ✅ Encrypted\n");
+                analysis.append("Recommendation:     Secure protocol\n");
+                break;
+            case "ICMP":
+                analysis.append("Type:               Control/Diagnostic\n");
+                analysis.append("Use Case:           Ping, Traceroute\n");
+                analysis.append("Security:           Monitor for floods\n");
+                break;
+            default:
+                analysis.append("Description:        Standard network protocol\n");
+                analysis.append("Security:           Review based on context\n");
+        }
+
+        return analysis.toString();
+    }
+
+    /**
+     * Get security assessment
+     */
+    private String getSecurityAssessment(TrafficData traffic) {
+        StringBuilder assessment = new StringBuilder();
+        int threatLevel = 0;
+        List<String> concerns = new ArrayList<>();
+
+        try {
+            int dstPort = Integer.parseInt(traffic.getDestinationPort());
+
+            // Check for suspicious ports
+            Set<Integer> suspiciousPorts = Set.of(
+                    1337, 31337, 12345, 12346, 20034,
+                    6667, 6668, 6669, 9996, 9997, 9998, 9999
+            );
+
+            if (suspiciousPorts.contains(dstPort)) {
+                threatLevel += 3;
+                concerns.add("⚠️ Trojan/Backdoor port detected");
+            }
+
+            // Check protocol security
+            if (traffic.getProtocol().equals("HTTP")) {
+                threatLevel += 1;
+                concerns.add("ℹ️ Unencrypted protocol");
+            }
+
+            // Check direction
+            String direction = determineTrafficDirection(
+                    traffic.getSourceIP(),
+                    traffic.getDestinationIP()
+            );
+
+            if (direction.contains("INBOUND") && !isLocalIP(traffic.getSourceIP())) {
+                threatLevel += 1;
+                concerns.add("ℹ️ External inbound connection");
+            }
+
+            // Assess overall threat level
+            String riskLevel;
+            String emoji;
+            if (threatLevel >= 3) {
+                riskLevel = "HIGH RISK";
+                emoji = "🔴";
+            } else if (threatLevel >= 2) {
+                riskLevel = "MEDIUM RISK";
+                emoji = "🟡";
+            } else if (threatLevel >= 1) {
+                riskLevel = "LOW RISK";
+                emoji = "🟢";
+            } else {
+                riskLevel = "NORMAL";
+                emoji = "✅";
+            }
+
+            assessment.append(String.format("Threat Level:       %s %s\n", emoji, riskLevel));
+            assessment.append(String.format("Risk Score:         %d/5\n", threatLevel));
+
+            if (!concerns.isEmpty()) {
+                assessment.append("\nSecurity Concerns:\n");
+                for (String concern : concerns) {
+                    assessment.append(String.format("  • %s\n", concern));
+                }
+            } else {
+                assessment.append("\nNo immediate concerns detected.\n");
+            }
+
+            // Recommendations
+            assessment.append("\nRecommendations:\n");
+            if (threatLevel >= 3) {
+                assessment.append("  • Investigate this connection immediately\n");
+                assessment.append("  • Consider blocking the source IP\n");
+                assessment.append("  • Review firewall rules\n");
+            } else if (threatLevel >= 1) {
+                assessment.append("  • Monitor this connection\n");
+                assessment.append("  • Verify legitimacy if suspicious\n");
+            } else {
+                assessment.append("  • Continue normal monitoring\n");
+            }
+
+        } catch (Exception e) {
+            assessment.append("Unable to perform security assessment\n");
+        }
+
+        return assessment.toString();
     }
 }

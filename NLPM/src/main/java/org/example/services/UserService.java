@@ -40,7 +40,9 @@ public class UserService {
             throw new DuplicateDataException("Email already exists: " + email);
         }
 
-        User user = new User(username, password, role);
+        // Hash the password before saving
+        String hashedPassword = AuthenticationService.hashPassword(password);
+        User user = new User(username, hashedPassword, role);
         user.setEmail(email);
         return userDAO.save(user);
     }
